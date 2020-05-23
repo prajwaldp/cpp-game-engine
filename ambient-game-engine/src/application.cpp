@@ -9,7 +9,8 @@ Application::~Application() {}
 
 void Application::Run() {
   std::cout << "Ambient Game Engine is running" << std::endl;
-  while (true)
+  while (true) {
     ;
+  }
 }
 }  // namespace Ambient

@@ -7,4 +7,6 @@ class Application {
   virtual ~Application();
   void Run();
 };
+
+Application* CreateApplication();
 }  // namespace Ambient
