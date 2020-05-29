@@ -1,5 +1,7 @@
 #pragma once
 
+#include "event.h"
+
 namespace Ambient {
 class Application {
  public:
