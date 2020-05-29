@@ -1,6 +1,7 @@
 #include "application.h"
 
-#include <iostream>
+// TODO: Remove for production
+#include "cmake_pch.hxx"
 
 namespace Ambient {
 Application::Application() {}
