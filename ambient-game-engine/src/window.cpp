@@ -1,10 +1,15 @@
 #include "window.h"
 
 #include "GLFW/glfw3.h"
+#include "event.h"
 #include "log.h"
 
 namespace Ambient {
 static bool s_GLFWInitialized = false;
+
+static void GLFWErrorCallback(int error, const char* description) {
+  AM_CORE_ERROR("GLFW Error: {0}, {1}", error, description);
+}
 
 Window* Window::Create(const WindowProps& props) {
   return new MacOSWindow(props);
@@ -25,6 +30,7 @@ void MacOSWindow::Init(const WindowProps& props) {
   if (!s_GLFWInitialized) {
     int success = glfwInit();
     // Check success
+    glfwSetErrorCallback(GLFWErrorCallback);
     s_GLFWInitialized = true;
   }
 
@@ -33,6 +39,46 @@ void MacOSWindow::Init(const WindowProps& props) {
   glfwMakeContextCurrent(m_Window);
   glfwSetWindowUserPointer(m_Window, &m_Data);
   SetVSync(true);
+
+  // Set GLFW Callbacks
+  glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
+    WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+    Event::WindowCloseEvent event;
+    data.EventCallback(event);
+  });
+
+  glfwSetWindowSizeCallback(
+      m_Window, [](GLFWwindow* window, int width, int height) {
+        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+        data.Width = width;
+        data.Height = height;
+
+        Event::WindowResizeEvent event(width, height);
+        data.EventCallback(event);
+      });
+
+  glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode,
+                                  int action, int mods) {
+    WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+    switch (action) {
+      case GLFW_PRESS: {
+        Event::KeyPressedEvent event(key, 0);
+        data.EventCallback(event);
+        break;
+      }
+
+      case GLFW_RELEASE: {
+        AM_CORE_WARN("GLFW Key Release not implemented");
+        break;
+      }
+
+      case GLFW_REPEAT: {
+        Event::KeyPressedEvent event(key, 1);
+        data.EventCallback(event);
+        break;
+      }
+    }
+  });
 }
 
 void MacOSWindow::ShutDown() { glfwDestroyWindow(m_Window); }

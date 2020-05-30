@@ -89,6 +89,18 @@ class WindowResizeEvent : public Event {
   EVENT_CLASS_CATEGORY(EventCatergoryApplication)
 };
 
+class WindowCloseEvent : public Event {
+ public:
+  std::string ToString() const override {
+    std::stringstream ss;
+    ss << "WindowCloseEvent";
+    return ss.str();
+  }
+
+  EVENT_CLASS_TYPE(WindowClose)
+  EVENT_CLASS_CATEGORY(EventCatergoryApplication)
+};
+
 class KeyEvent : public Event {
  protected:
   int m_KeyCode;
@@ -116,6 +128,7 @@ class KeyPressedEvent : public KeyEvent {
   }
 
   EVENT_CLASS_TYPE(KeyPressed)
+  EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryKeyboard)
 };
 
 class EventDispatcher {
