@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sstream>
+#include <string>
+
 #define BIT(x) (1 << x)
 
 #define EVENT_CLASS_TYPE(type)                                           \

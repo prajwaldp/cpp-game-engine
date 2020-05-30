@@ -1,17 +1,16 @@
 #include "application.h"
 
-// TODO: Remove for production
-#include "cmake_pch.hxx"
-
 namespace Ambient {
-Application::Application() {}
+Application::Application() {
+  m_Window = std::unique_ptr<Window>(Window::Create());
+}
 
 Application::~Application() {}
 
 void Application::Run() {
   std::cout << "Ambient Game Engine is running" << std::endl;
-  while (true) {
-    ;
+  while (m_Running) {
+    m_Window->OnUpdate();
   }
 }
 }  // namespace Ambient
