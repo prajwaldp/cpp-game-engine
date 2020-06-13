@@ -131,6 +131,85 @@ class KeyPressedEvent : public KeyEvent {
   EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryKeyboard)
 };
 
+/*
+ * Mouse Events
+ * 1. MouseButtonPressed
+ * 2. MouseButtonReleased
+ */
+
+class MouseButtonEvent : public Event {
+ protected:
+  int m_Button;
+
+ public:
+  MouseButtonEvent(int button) : m_Button(button) {}
+
+  EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse |
+                       EventCatergoryMouseButton)
+};
+
+class MouseButtonPressedEvent : public MouseButtonEvent {
+ public:
+  MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
+
+  std::string ToString() const override {
+    std::stringstream ss;
+    ss << "MouseButtonPressedEvent: " << m_Button;
+    return ss.str();
+  }
+
+  EVENT_CLASS_TYPE(MouseButtonPressed);
+};
+
+class MouseButtonReleasedEvent : public MouseButtonEvent {
+ public:
+  MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
+
+  std::string ToString() const override {
+    std::stringstream ss;
+    ss << "MouseButtonReleasedEvent: " << m_Button;
+    return ss.str();
+  }
+
+  EVENT_CLASS_TYPE(MouseButtonReleased);
+};
+
+class MousePositionEvent : public Event {
+ protected:
+  double m_X, m_Y;
+
+ public:
+  MousePositionEvent(double x, double y) : m_X(x), m_Y(y) {}
+
+  EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse);
+};
+
+class MouseMovedEvent : public MousePositionEvent {
+ public:
+  MouseMovedEvent(double x, double y) : MousePositionEvent(x, y) {}
+
+  std::string ToString() const override {
+    std::stringstream ss;
+    ss << "MouseMovedEvent: " << m_X << ", " << m_Y;
+    return ss.str();
+  }
+
+  EVENT_CLASS_TYPE(MouseMoved)
+};
+
+class MouseScrolledEvent : public MousePositionEvent {
+ public:
+  MouseScrolledEvent(double x, double y) : MousePositionEvent(x, y) {}
+
+  std::string ToString() const override {
+    std::stringstream ss;
+    ss << "MouseScrolledEvent: " << m_X << ", " << m_Y;
+    return ss.str();
+  }
+
+  EVENT_CLASS_TYPE(MouseScrolled)
+};
+
 class EventDispatcher {
   template <typename T>
   using EventFn = std::function<bool(T&)>;
