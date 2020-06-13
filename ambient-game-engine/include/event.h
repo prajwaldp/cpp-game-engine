@@ -53,10 +53,9 @@ enum Catergory {
 class Event {
   friend class EventDispatcher;
 
- protected:
-  bool m_Handled = false;
-
  public:
+  bool Handled = false;
+
   // Pure virtual functions: **Have** to be overidden in the derived class
   virtual Ambient::Event::Type GetEventType() const = 0;
   virtual const char* GetName() const = 0;
@@ -222,7 +221,7 @@ class EventDispatcher {
   template <typename T>
   bool Dispatch(EventFn<T> func) {
     if (m_Event.GetEventType() == T::GetStaticType()) {
-      m_Event.m_Handled = func(*(T*)&m_Event);
+      m_Event.Handled = func(*(T*)&m_Event);
       return true;
     }
     return false;

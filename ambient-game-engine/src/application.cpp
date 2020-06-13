@@ -15,8 +15,18 @@ Application::~Application() {}
 void Application::Run() {
   std::cout << "Ambient Game Engine is running" << std::endl;
   while (m_Running) {
+    for (auto layer : m_LayerStack) {
+      layer->OnUpdate();
+    }
+
     m_Window->OnUpdate();
   }
+}
+
+void Application::PushLayer(Layer* layer) { m_LayerStack.Push(layer); }
+
+void Application::PushOverlay(Layer* overlay) {
+  m_LayerStack.PushOverlay(overlay);
 }
 
 void Application::OnEvent(Event::Event& e) {
@@ -25,6 +35,13 @@ void Application::OnEvent(Event::Event& e) {
       BIND_EVENT_FN(Application::OnWindowClosed));
 
   AM_CORE_TRACE("{0}", e.ToString());
+
+  for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
+    (*--it)->OnEvent(e);
+    if (e.Handled) {
+      break;
+    }
+  }
 }
 
 bool Application::OnWindowClosed(Event::WindowCloseEvent& e) {
