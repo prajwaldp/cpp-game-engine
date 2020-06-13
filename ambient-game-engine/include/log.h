@@ -33,8 +33,8 @@ class Logger {
   ::Ambient::Logger::GetCoreLogger()->fatal(__VA_ARGS__)
 
 // Client Log Macros
-#define AM_TRACE(...) ::Ambient::Logger::GetCleintLogger()->trace(__VA_ARGS__)
-#define AM_INFO(...) ::Ambient::Logger::GetCleintLogger()->info(__VA_ARGS__)
-#define AM_WARN(...) ::Ambient::Logger::GetCleintLogger()->warn(__VA_ARGS__)
-#define AM_ERROR(...) ::Ambient::Logger::GetCleintLogger()->error(__VA_ARGS__)
-#define AM_FATAL(...) ::Ambient::Logger::GetCleintLogger()->fatal(__VA_ARGS__)
+#define AM_TRACE(...) ::Ambient::Logger::GetClientLogger()->trace(__VA_ARGS__)
+#define AM_INFO(...) ::Ambient::Logger::GetClientLogger()->info(__VA_ARGS__)
+#define AM_WARN(...) ::Ambient::Logger::GetClientLogger()->warn(__VA_ARGS__)
+#define AM_ERROR(...) ::Ambient::Logger::GetClientLogger()->error(__VA_ARGS__)
+#define AM_FATAL(...) ::Ambient::Logger::GetClientLogger()->fatal(__VA_ARGS__)
