@@ -15,12 +15,12 @@ add_library(ambient SHARED ${SOURCES})
 target_include_directories(ambient PUBLIC include)
 target_link_libraries(ambient ${CONAN_LIBS})
 target_compile_features(ambient PUBLIC cxx_std_11)
-target_precompile_headers(ambient
-PUBLIC
-<algorithm>
-<functional>
-<iostream>
-<memory>
-<sstream>
-<string>
-)
+
+target_precompile_headers(ambient PUBLIC
+                                  <algorithm>
+                                  <functional>
+                                  <iostream>
+                                  <memory>
+                                  <sstream>
+                                  <string>
+                                  <vector>)

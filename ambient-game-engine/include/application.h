@@ -1,28 +1,34 @@
 #pragma once
 
-#include "event.h"
-#include "layer_stack.h"
-#include "window.h"
+#include "Event.h"
+#include "LayerStack.h"
+#include "Log.h"
+#include "Renderer/Shader.h"
+#include "Window.h"
 
 namespace Ambient {
 class Application {
- public:
-  Application();
-  virtual ~Application();
-  void Run();
-  void OnEvent(Event::Event&);
+  public:
+    Application();
+    virtual ~Application();
+    void Run();
+    void OnEvent(Event::Event&);
 
-  void PushLayer(Layer* layer);
-  void PushOverlay(Layer* overlay);
+    void PushLayer(Layer* layer);
+    void PushOverlay(Layer* overlay);
 
- private:
-  bool OnWindowClosed(Event::WindowCloseEvent&);
+    unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+    std::unique_ptr<Shader> m_Shader;
+    static Application* s_Instance;
 
-  std::unique_ptr<Window> m_Window;
-  bool m_Running = true;
+  private:
+    bool OnWindowClosed(Event::WindowCloseEvent&);
 
-  LayerStack m_LayerStack;  // stack allocated ?
+    std::unique_ptr<Window> m_Window;
+    bool m_Running = true;
+
+    LayerStack m_LayerStack; // stack allocated ?
 };
 
 Application* CreateApplication();
-}  // namespace Ambient
+} // namespace Ambient

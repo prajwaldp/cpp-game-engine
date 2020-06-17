@@ -1,3 +1,3 @@
-#include "application.h"
-#include "entry_point.h"
-#include "log.h"
+#include "Application.h"
+#include "EntryPoint.h"
+#include "Log.h"
