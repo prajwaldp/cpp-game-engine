@@ -14,12 +14,13 @@ struct WindowProps {
     unsigned int Height;
 
     WindowProps(const std::string& title = "Ambient Engine",
-                unsigned int width = 1280, unsigned int height = 720)
+                unsigned int width = 1280,
+                unsigned int height = 720)
         : Title(title), Width(width), Height(height) {}
 };
 
 class Window {
-  public:
+   public:
     using EventCallbackFn = std::function<void(Ambient::Event::Event&)>;
 
     virtual ~Window() {}
@@ -36,7 +37,7 @@ class Window {
 };
 
 class MacOSWindow : public Window {
-  public:
+   public:
     MacOSWindow(const WindowProps& props);
     virtual ~MacOSWindow();
 
@@ -52,7 +53,7 @@ class MacOSWindow : public Window {
     void SetVSync(bool enabled) override;
     bool IsVsync() const override;
 
-  private:
+   private:
     virtual void Init(const WindowProps& props);
     virtual void ShutDown();
 
@@ -69,4 +70,4 @@ class MacOSWindow : public Window {
 
     WindowData m_Data;
 };
-} // namespace Ambient
+}  // namespace Ambient

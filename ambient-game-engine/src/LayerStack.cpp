@@ -12,7 +12,9 @@ void LayerStack::Push(Layer* layer) {
     m_LayerIt = m_Layers.emplace(m_LayerIt, layer);
 }
 
-void LayerStack::PushOverlay(Layer* overlay) { m_Layers.emplace_back(overlay); }
+void LayerStack::PushOverlay(Layer* overlay) {
+    m_Layers.emplace_back(overlay);
+}
 
 void LayerStack::Pop(Layer* layer) {
     auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);

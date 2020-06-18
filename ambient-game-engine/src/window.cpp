@@ -1,10 +1,9 @@
 #include "Window.h"
 
 #include "Event.h"
+#include "GLFW/glfw3.h"
 #include "Log.h"
 #include "Renderer/OpenGLContext.h"
-
-#include "GLFW/glfw3.h"
 
 namespace Ambient {
 static bool s_GLFWInitialized = false;
@@ -17,9 +16,13 @@ Window* Window::Create(const WindowProps& props) {
     return new MacOSWindow(props);
 }
 
-MacOSWindow::MacOSWindow(const WindowProps& props) { Init(props); }
+MacOSWindow::MacOSWindow(const WindowProps& props) {
+    Init(props);
+}
 
-MacOSWindow::~MacOSWindow() { ShutDown(); }
+MacOSWindow::~MacOSWindow() {
+    ShutDown();
+}
 
 void MacOSWindow::Init(const WindowProps& props) {
     m_Data.Title = props.Title;
@@ -76,22 +79,22 @@ void MacOSWindow::Init(const WindowProps& props) {
             *(WindowData*)glfwGetWindowUserPointer(window);
 
         switch (action) {
-        case GLFW_PRESS: {
-            Event::KeyPressedEvent event(key, 0);
-            window_data.EventCallback(event);
-            break;
-        }
+            case GLFW_PRESS: {
+                Event::KeyPressedEvent event(key, 0);
+                window_data.EventCallback(event);
+                break;
+            }
 
-        case GLFW_RELEASE: {
-            AM_CORE_WARN("GLFW Key Release not implemented");
-            break;
-        }
+            case GLFW_RELEASE: {
+                AM_CORE_WARN("GLFW Key Release not implemented");
+                break;
+            }
 
-        case GLFW_REPEAT: {
-            Event::KeyPressedEvent event(key, 1);
-            window_data.EventCallback(event);
-            break;
-        }
+            case GLFW_REPEAT: {
+                Event::KeyPressedEvent event(key, 1);
+                window_data.EventCallback(event);
+                break;
+            }
         }
     });
 
@@ -101,17 +104,17 @@ void MacOSWindow::Init(const WindowProps& props) {
                 *(WindowData*)glfwGetWindowUserPointer(window);
 
             switch (action) {
-            case GLFW_PRESS: {
-                Event::MouseButtonPressedEvent event(button);
-                window_data.EventCallback(event);
-                break;
-            }
+                case GLFW_PRESS: {
+                    Event::MouseButtonPressedEvent event(button);
+                    window_data.EventCallback(event);
+                    break;
+                }
 
-            case GLFW_RELEASE: {
-                Event::MouseButtonReleasedEvent event(button);
-                window_data.EventCallback(event);
-                break;
-            }
+                case GLFW_RELEASE: {
+                    Event::MouseButtonReleasedEvent event(button);
+                    window_data.EventCallback(event);
+                    break;
+                }
             }
         });
 
@@ -134,7 +137,9 @@ void MacOSWindow::Init(const WindowProps& props) {
         });
 }
 
-void MacOSWindow::ShutDown() { glfwDestroyWindow(m_Window); }
+void MacOSWindow::ShutDown() {
+    glfwDestroyWindow(m_Window);
+}
 
 void MacOSWindow::OnUpdate() {
     glfwPollEvents();
@@ -151,5 +156,7 @@ void MacOSWindow::SetVSync(bool enabled) {
     m_Data.VSync = enabled;
 }
 
-bool MacOSWindow::IsVsync() const { return m_Data.VSync; }
-} // namespace Ambient
+bool MacOSWindow::IsVsync() const {
+    return m_Data.VSync;
+}
+}  // namespace Ambient
