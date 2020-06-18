@@ -1,13 +1,12 @@
 #pragma once
 #include <memory>
 
-#include "Application.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
 namespace Ambient {
 class Logger {
-  public:
+   public:
     static void Init();
     inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() {
         return s_CoreLogger;
@@ -16,20 +15,20 @@ class Logger {
         return s_ClientLogger;
     };
 
-  private:
+   private:
     static std::shared_ptr<spdlog::logger> s_CoreLogger;
     static std::shared_ptr<spdlog::logger> s_ClientLogger;
 };
-} // namespace Ambient
+}  // namespace Ambient
 
 // Core Log Macros
-#define AM_CORE_TRACE(...)                                                     \
+#define AM_CORE_TRACE(...) \
     ::Ambient::Logger::GetCoreLogger()->trace(__VA_ARGS__)
 #define AM_CORE_INFO(...) ::Ambient::Logger::GetCoreLogger()->info(__VA_ARGS__)
 #define AM_CORE_WARN(...) ::Ambient::Logger::GetCoreLogger()->warn(__VA_ARGS__)
-#define AM_CORE_ERROR(...)                                                     \
+#define AM_CORE_ERROR(...) \
     ::Ambient::Logger::GetCoreLogger()->error(__VA_ARGS__)
-#define AM_CORE_FATAL(...)                                                     \
+#define AM_CORE_FATAL(...) \
     ::Ambient::Logger::GetCoreLogger()->fatal(__VA_ARGS__)
 
 // Client Log Macros
