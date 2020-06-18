@@ -9,7 +9,7 @@ cmake_policy(SET CMP0068 NEW)  # `RPATH` settings on macOS do not affect `ambien
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of the conanbuildinfo.cmake file.
 conan_basic_setup()  # This is a macro defined in the above file
 
-file(GLOB SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES src *.cpp)
 
 add_library(ambient SHARED ${SOURCES})
 target_include_directories(ambient PUBLIC include)
