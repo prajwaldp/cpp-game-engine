@@ -1,6 +1,4 @@
 #include "Application.h"
-#include "Log.h"
-#include "Renderer/Renderer.h"
 
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
@@ -54,7 +52,7 @@ static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     return 0;
 }
 
-Application::Application()
+Application::Application() : m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
 {
     m_Window = std::unique_ptr<Window>(Window::Create());
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
@@ -136,13 +134,15 @@ Application::Application()
        layout(location = 0) in vec3 a_Position;
        layout(location = 1) in vec4 a_Color;
 
+       uniform mat4 u_ViewProjection;
+
        out vec3 v_Position;
        out vec4 v_Color;
 
        void main() {
            v_Position = a_Position;
            v_Color = a_Color;
-           gl_Position = vec4(a_Position, 1.0);
+           gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
        }
    )";
 
@@ -167,11 +167,13 @@ Application::Application()
 
        layout(location = 0) in vec3 a_Position;
 
+       uniform mat4 u_ViewProjection;
+
        out vec3 v_Position;
 
        void main() {
            v_Position = a_Position;
-           gl_Position = vec4(a_Position, 1.0);
+           gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
        }
    )";
 
@@ -201,17 +203,12 @@ void Application::Run()
         RenderCommand::SetClearColor();
         RenderCommand::Clear();
 
-        Renderer::BeginScene();
+        m_Camera.SetPosition({0.5f, 0.5f, 0.0f});
+        m_Camera.SetRotation(45.0f);
 
-        // DirectX requires binding before the vertex buffer is created
-        // Because the layout has to correspond
-
-        m_SquareShader->Bind();
-        Renderer::Submit(m_SquareVertexArray);
-
-        m_Shader->Bind();
-        Renderer::Submit(m_VertexArray);
-
+        Renderer::BeginScene(m_Camera);
+        Renderer::Submit(m_SquareShader, m_SquareVertexArray);
+        Renderer::Submit(m_Shader, m_VertexArray);
         Renderer::EndScene();
 
         Renderer::Flush(); // Usually done on a separate thread

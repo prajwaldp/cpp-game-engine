@@ -8,20 +8,25 @@ namespace Ambient
 // Future support for Direct3D, Vulkan, etc.?
 RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
-/**
- * Takes all of our scene parameters
- * E.g. Camera parameters, lighting and environment parameters etc.
- **/
-void Renderer::BeginScene()
+Renderer::SceneData *Renderer::m_SceneData = new Renderer::SceneData;
+
+void Renderer::BeginScene(OrthographicCamera &camera)
 {
+    m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 }
 
 void Renderer::EndScene()
 {
 }
 
-void Renderer::Submit(const std::shared_ptr<VertexArray> &vertexArray)
+void Renderer::Submit(const std::shared_ptr<Shader> shader, const std::shared_ptr<VertexArray> &vertexArray)
 {
+    // DirectX requires binding before the vertex buffer is created
+    // Because the layout has to correspond
+
+    shader->Bind();
+    shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+
     vertexArray->Bind();
     RenderCommand::DrawIndexed(vertexArray);
 }

@@ -4,6 +4,8 @@
 #include "LayerStack.h"
 #include "Log.h"
 #include "Renderer/Buffer.h"
+#include "Renderer/Camera.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 #include "Window.h"
@@ -31,6 +33,7 @@ class Application
     // std::shared_ptr<IndexBuffer> m_IndexBuffer;
 
     static Application *s_Instance;
+    OrthographicCamera m_Camera;
 
   private:
     bool OnWindowClosed(Event::WindowCloseEvent &);

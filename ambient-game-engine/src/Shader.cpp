@@ -2,6 +2,7 @@
 #include "Log.h"
 
 #include "GL/glew.h"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Ambient
 {
@@ -112,13 +113,25 @@ Shader::~Shader()
 {
     glDeleteProgram(m_RendererID);
 }
+
 void Shader::Bind() const
 {
     glUseProgram(m_RendererID);
 }
+
 void Shader::UnBind() const
 {
     glUseProgram(0);
+}
+
+void Shader::UploadUniformMat4(const std::string &name, const glm::mat4 &matrix)
+{
+    GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+
+    // 1 = No. of matrices
+    // GL_FALSE = no need to transpose. But for DirectX (which uses row-major
+    // ordering), transposing is needed
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 } // namespace Ambient
