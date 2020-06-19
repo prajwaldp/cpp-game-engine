@@ -6,17 +6,32 @@
 
 #define BIT(x) (1 << x)
 
-#define EVENT_CLASS_TYPE(type)                                                 \
-    static Type GetStaticType() { return Ambient::Event::Type::type; }         \
-    virtual Type GetEventType() const override { return GetStaticType(); }     \
-    virtual const char* GetName() const override { return #type; }
+#define EVENT_CLASS_TYPE(type)                                                                                         \
+    static Type GetStaticType()                                                                                        \
+    {                                                                                                                  \
+        return Ambient::Event::Type::type;                                                                             \
+    }                                                                                                                  \
+    virtual Type GetEventType() const override                                                                         \
+    {                                                                                                                  \
+        return GetStaticType();                                                                                        \
+    }                                                                                                                  \
+    virtual const char *GetName() const override                                                                       \
+    {                                                                                                                  \
+        return #type;                                                                                                  \
+    }
 
-#define EVENT_CLASS_CATEGORY(category)                                         \
-    virtual int GetCategoryFlags() const override { return category; };
+#define EVENT_CLASS_CATEGORY(category)                                                                                 \
+    virtual int GetCategoryFlags() const override                                                                      \
+    {                                                                                                                  \
+        return category;                                                                                               \
+    };
 
-namespace Ambient {
-namespace Event {
-enum class Type { // EventType is a strict type
+namespace Ambient
+{
+namespace Event
+{
+enum class Type
+{ // EventType is a strict type
     None = 0,
 
     // Window Events
@@ -42,7 +57,8 @@ enum class Type { // EventType is a strict type
     MouseScrolled
 };
 
-enum Catergory {
+enum Catergory
+{
     None = 0,
     EventCatergoryApplication = BIT(0),
     EventCatergoryInput = BIT(1),
@@ -51,7 +67,8 @@ enum Catergory {
     EventCatergoryMouseButton = BIT(4),
 };
 
-class Event {
+class Event
+{
     friend class EventDispatcher;
 
   public:
@@ -59,27 +76,40 @@ class Event {
 
     // Pure virtual functions: **Have** to be overidden in the derived class
     virtual Ambient::Event::Type GetEventType() const = 0;
-    virtual const char* GetName() const = 0;
+    virtual const char *GetName() const = 0;
     virtual int GetCategoryFlags() const = 0;
 
-    virtual std::string ToString() const { return GetName(); }
+    virtual std::string ToString() const
+    {
+        return GetName();
+    }
 
-    inline bool IsInCategory(Ambient::Event::Catergory category) {
+    inline bool IsInCategory(Ambient::Event::Catergory category)
+    {
         return GetCategoryFlags() & category; // bitwise &
     }
 };
 
-class WindowResizeEvent : public Event {
+class WindowResizeEvent : public Event
+{
   protected:
     int m_Width, m_Height;
 
   public:
-    WindowResizeEvent(unsigned int width, unsigned int height)
-        : m_Width(width), m_Height(height) {}
-    inline unsigned int GetWidth() const { return m_Width; }
-    inline unsigned int GetHeight() const { return m_Height; }
+    WindowResizeEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height)
+    {
+    }
+    inline unsigned int GetWidth() const
+    {
+        return m_Width;
+    }
+    inline unsigned int GetHeight() const
+    {
+        return m_Height;
+    }
 
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
         ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
         return ss.str();
@@ -89,9 +119,11 @@ class WindowResizeEvent : public Event {
     EVENT_CLASS_CATEGORY(EventCatergoryApplication)
 };
 
-class WindowCloseEvent : public Event {
+class WindowCloseEvent : public Event
+{
   public:
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
         ss << "WindowCloseEvent";
         return ss.str();
@@ -101,29 +133,40 @@ class WindowCloseEvent : public Event {
     EVENT_CLASS_CATEGORY(EventCatergoryApplication)
 };
 
-class KeyEvent : public Event {
+class KeyEvent : public Event
+{
   protected:
     int m_KeyCode;
-    KeyEvent(int keycode) : m_KeyCode(keycode) {}
+    KeyEvent(int keycode) : m_KeyCode(keycode)
+    {
+    }
 
   public:
-    inline unsigned int GetKeyCode() const { return m_KeyCode; }
+    inline unsigned int GetKeyCode() const
+    {
+        return m_KeyCode;
+    }
     EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryKeyboard)
 };
 
-class KeyPressedEvent : public KeyEvent {
+class KeyPressedEvent : public KeyEvent
+{
     int m_RepeatCount;
 
   public:
-    KeyPressedEvent(int keycode, int repeat_count)
-        : KeyEvent(keycode), m_RepeatCount(repeat_count) {}
+    KeyPressedEvent(int keycode, int repeat_count) : KeyEvent(keycode), m_RepeatCount(repeat_count)
+    {
+    }
 
-    inline unsigned int GetRepeatCount() const { return m_RepeatCount; }
+    inline unsigned int GetRepeatCount() const
+    {
+        return m_RepeatCount;
+    }
 
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
-        ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount
-           << " repeats)";
+        ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
         return ss.str();
     }
 
@@ -137,22 +180,28 @@ class KeyPressedEvent : public KeyEvent {
  * 2. MouseButtonReleased
  */
 
-class MouseButtonEvent : public Event {
+class MouseButtonEvent : public Event
+{
   protected:
     int m_Button;
 
   public:
-    MouseButtonEvent(int button) : m_Button(button) {}
+    MouseButtonEvent(int button) : m_Button(button)
+    {
+    }
 
-    EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse |
-                         EventCatergoryMouseButton)
+    EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse | EventCatergoryMouseButton)
 };
 
-class MouseButtonPressedEvent : public MouseButtonEvent {
+class MouseButtonPressedEvent : public MouseButtonEvent
+{
   public:
-    MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
+    MouseButtonPressedEvent(int button) : MouseButtonEvent(button)
+    {
+    }
 
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
         ss << "MouseButtonPressedEvent: " << m_Button;
         return ss.str();
@@ -161,11 +210,15 @@ class MouseButtonPressedEvent : public MouseButtonEvent {
     EVENT_CLASS_TYPE(MouseButtonPressed);
 };
 
-class MouseButtonReleasedEvent : public MouseButtonEvent {
+class MouseButtonReleasedEvent : public MouseButtonEvent
+{
   public:
-    MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
+    MouseButtonReleasedEvent(int button) : MouseButtonEvent(button)
+    {
+    }
 
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
         ss << "MouseButtonReleasedEvent: " << m_Button;
         return ss.str();
@@ -174,21 +227,28 @@ class MouseButtonReleasedEvent : public MouseButtonEvent {
     EVENT_CLASS_TYPE(MouseButtonReleased);
 };
 
-class MousePositionEvent : public Event {
+class MousePositionEvent : public Event
+{
   protected:
     double m_X, m_Y;
 
   public:
-    MousePositionEvent(double x, double y) : m_X(x), m_Y(y) {}
+    MousePositionEvent(double x, double y) : m_X(x), m_Y(y)
+    {
+    }
 
     EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse);
 };
 
-class MouseMovedEvent : public MousePositionEvent {
+class MouseMovedEvent : public MousePositionEvent
+{
   public:
-    MouseMovedEvent(double x, double y) : MousePositionEvent(x, y) {}
+    MouseMovedEvent(double x, double y) : MousePositionEvent(x, y)
+    {
+    }
 
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
         ss << "MouseMovedEvent: " << m_X << ", " << m_Y;
         return ss.str();
@@ -197,11 +257,15 @@ class MouseMovedEvent : public MousePositionEvent {
     EVENT_CLASS_TYPE(MouseMoved)
 };
 
-class MouseScrolledEvent : public MousePositionEvent {
+class MouseScrolledEvent : public MousePositionEvent
+{
   public:
-    MouseScrolledEvent(double x, double y) : MousePositionEvent(x, y) {}
+    MouseScrolledEvent(double x, double y) : MousePositionEvent(x, y)
+    {
+    }
 
-    std::string ToString() const override {
+    std::string ToString() const override
+    {
         std::stringstream ss;
         ss << "MouseScrolledEvent: " << m_X << ", " << m_Y;
         return ss.str();
@@ -210,24 +274,30 @@ class MouseScrolledEvent : public MousePositionEvent {
     EVENT_CLASS_TYPE(MouseScrolled)
 };
 
-class EventDispatcher {
-    template <typename T> using EventFn = std::function<bool(T&)>;
+class EventDispatcher
+{
+    template <typename T> using EventFn = std::function<bool(T &)>;
 
-    Event& m_Event;
+    Event &m_Event;
 
   public:
-    EventDispatcher(Event& event) : m_Event(event) {}
+    EventDispatcher(Event &event) : m_Event(event)
+    {
+    }
 
-    template <typename T> bool Dispatch(EventFn<T> func) {
-        if (m_Event.GetEventType() == T::GetStaticType()) {
-            m_Event.Handled = func(*(T*)&m_Event);
+    template <typename T> bool Dispatch(EventFn<T> func)
+    {
+        if (m_Event.GetEventType() == T::GetStaticType())
+        {
+            m_Event.Handled = func(*(T *)&m_Event);
             return true;
         }
         return false;
     }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const Event& e) {
+inline std::ostream &operator<<(std::ostream &os, const Event &e)
+{
     return os << e.ToString();
 }
 

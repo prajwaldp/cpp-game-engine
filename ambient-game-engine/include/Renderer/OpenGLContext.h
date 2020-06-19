@@ -4,8 +4,10 @@
 
 struct GLFWwindow;
 
-namespace Ambient {
-class OpenGLContext : public GraphicsContext {
+namespace Ambient
+{
+class OpenGLContext : public GraphicsContext
+{
   private:
     GLFWwindow *m_WindowHandle;
 

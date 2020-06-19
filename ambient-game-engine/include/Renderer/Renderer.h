@@ -1,13 +1,22 @@
 #pragma once
 
-namespace Ambient {
-enum class RendererAPI { None = 0, OpenGL = 1 };
+namespace Ambient
+{
+enum class RendererAPI
+{
+    None = 0,
+    OpenGL = 1
+};
 
-class Renderer {
-   public:
+class Renderer
+{
+  public:
     // TODO - Make private and add a getter
     static RendererAPI s_RendererAPI;
-    inline static RendererAPI GetAPI() { return s_RendererAPI; }
+    inline static RendererAPI GetAPI()
+    {
+        return s_RendererAPI;
+    }
 
     // Draw the contents of the buffer (vertex buffer) on the screen
     // This is done using the shader
@@ -15,4 +24,4 @@ class Renderer {
     // chosen for each call)
     void Draw();
 };
-}  // namespace Ambient
+} // namespace Ambient

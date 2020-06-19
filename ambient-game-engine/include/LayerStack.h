@@ -5,14 +5,16 @@
 // Included in Precompiled Header. Can remove?
 #include <vector>
 
-namespace Ambient {
+namespace Ambient
+{
 
 /*
 A wrapper over a vector of Layer objects
 It is not an actual stack. Layers get pushed into the starting half and Overlays
 get pushed into the second half of the vector.
 */
-class LayerStack {
+class LayerStack
+{
   private:
     std::vector<Layer *> m_Layers;
     std::vector<Layer *>::iterator m_LayerIt;
@@ -26,7 +28,13 @@ class LayerStack {
     void Pop(Layer *layer);
     void PopOverlay(Layer *layer);
 
-    std::vector<Layer *>::iterator begin() { return m_Layers.begin(); }
-    std::vector<Layer *>::iterator end() { return m_Layers.end(); }
+    std::vector<Layer *>::iterator begin()
+    {
+        return m_Layers.begin();
+    }
+    std::vector<Layer *>::iterator end()
+    {
+        return m_Layers.end();
+    }
 };
 } // namespace Ambient

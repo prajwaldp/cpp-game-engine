@@ -2,11 +2,12 @@
 
 #include <string>
 
-namespace Ambient {
-class Shader {
+namespace Ambient
+{
+class Shader
+{
   public:
-    Shader(const std::string& vertex_shader_src,
-           const std::string& fragment_shader_src);
+    Shader(const std::string &vertex_shader_src, const std::string &fragment_shader_src);
     ~Shader();
 
     void Bind() const;

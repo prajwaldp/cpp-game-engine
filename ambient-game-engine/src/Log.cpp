@@ -1,10 +1,12 @@
 #include "Log.h"
 
-namespace Ambient {
+namespace Ambient
+{
 std::shared_ptr<spdlog::logger> Logger::s_CoreLogger;
 std::shared_ptr<spdlog::logger> Logger::s_ClientLogger;
 
-void Logger::Init() {
+void Logger::Init()
+{
     spdlog::set_pattern("%^[%T] %n: %v%$");
 
     s_CoreLogger = spdlog::stdout_color_mt("AmbientEngine");

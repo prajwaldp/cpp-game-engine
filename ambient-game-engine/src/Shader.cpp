@@ -3,10 +3,11 @@
 
 #include "GL/glew.h"
 
-namespace Ambient {
+namespace Ambient
+{
 
-Shader::Shader(const std::string& vertexSource,
-               const std::string& fragmentSource) {
+Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
+{
     // Source: https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language
 
     // Create an empty vertex shader handle
@@ -14,7 +15,7 @@ Shader::Shader(const std::string& vertexSource,
 
     // Send the vertex shader source code to GL
     // Note that std::string's .c_str is NULL character terminated.
-    const GLchar* source = (const GLchar*)vertexSource.c_str();
+    const GLchar *source = (const GLchar *)vertexSource.c_str();
     glShaderSource(vertexShader, 1, &source, 0);
 
     // Compile the vertex shader
@@ -22,7 +23,8 @@ Shader::Shader(const std::string& vertexSource,
 
     GLint isCompiled = 0;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
-    if (isCompiled == GL_FALSE) {
+    if (isCompiled == GL_FALSE)
+    {
         GLint maxLength = 0;
         glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -42,14 +44,15 @@ Shader::Shader(const std::string& vertexSource,
 
     // Send the fragment shader source code to GL
     // Note that std::string's .c_str is NULL character terminated.
-    source = (const GLchar*)fragmentSource.c_str();
+    source = (const GLchar *)fragmentSource.c_str();
     glShaderSource(fragmentShader, 1, &source, 0);
 
     // Compile the fragment shader
     glCompileShader(fragmentShader);
 
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
-    if (isCompiled == GL_FALSE) {
+    if (isCompiled == GL_FALSE)
+    {
         GLint maxLength = 0;
         glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -62,8 +65,7 @@ Shader::Shader(const std::string& vertexSource,
         // Either of them. Don't leak shaders.
         glDeleteShader(vertexShader);
 
-        AM_CORE_ERROR("Fragment shader compilation failure! {}",
-                      infoLog.data());
+        AM_CORE_ERROR("Fragment shader compilation failure! {}", infoLog.data());
         return;
     }
 
@@ -81,8 +83,9 @@ Shader::Shader(const std::string& vertexSource,
 
     // Note the different functions here: glGetProgram* instead of glGetShader*.
     GLint isLinked = 0;
-    glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int*)&isLinked);
-    if (isLinked == GL_FALSE) {
+    glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int *)&isLinked);
+    if (isLinked == GL_FALSE)
+    {
         GLint maxLength = 0;
         glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -105,8 +108,17 @@ Shader::Shader(const std::string& vertexSource,
     glDetachShader(m_RendererID, fragmentShader);
 }
 
-Shader::~Shader() { glDeleteProgram(m_RendererID); }
-void Shader::Bind() const { glUseProgram(m_RendererID); }
-void Shader::UnBind() const { glUseProgram(0); }
+Shader::~Shader()
+{
+    glDeleteProgram(m_RendererID);
+}
+void Shader::Bind() const
+{
+    glUseProgram(m_RendererID);
+}
+void Shader::UnBind() const
+{
+    glUseProgram(0);
+}
 
 } // namespace Ambient
