@@ -6,6 +6,7 @@ LayerStack::LayerStack()
 {
     m_LayerIt = m_Layers.begin();
 }
+
 LayerStack::~LayerStack()
 {
     for (Layer *layer : m_Layers)

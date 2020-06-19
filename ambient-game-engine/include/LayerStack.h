@@ -32,6 +32,7 @@ class LayerStack
     {
         return m_Layers.begin();
     }
+
     std::vector<Layer *>::iterator end()
     {
         return m_Layers.end();
