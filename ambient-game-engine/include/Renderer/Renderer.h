@@ -1,27 +1,74 @@
 #pragma once
 
+#include "Renderer/VertexArray.h"
+#include <memory>
+
 namespace Ambient
 {
-enum class RendererAPI
+class RendererAPI
 {
-    None = 0,
-    OpenGL = 1
+  public:
+    enum class API
+    {
+        None = 0,
+        OpenGL = 1
+    };
+
+    virtual void SetClearColor() = 0;
+    virtual void Clear() = 0;
+
+    virtual void DrawIndexed(const std::shared_ptr<VertexArray> &vertexArray) = 0;
+
+    inline static API GetAPI()
+    {
+        return s_API;
+    }
+
+  private:
+    static API s_API;
+};
+
+/**
+ * A static wrapper for OpenGL commands
+ **/
+class RenderCommand
+{
+  public:
+    inline static void SetClearColor()
+    {
+        s_RendererAPI->SetClearColor();
+    }
+
+    inline static void Clear()
+    {
+        s_RendererAPI->Clear();
+    }
+
+    inline static void DrawIndexed(const std::shared_ptr<VertexArray> &vertexArray)
+    {
+        s_RendererAPI->DrawIndexed(vertexArray);
+    }
+
+  private:
+    static RendererAPI *s_RendererAPI;
 };
 
 class Renderer
 {
-  public:
-    // TODO - Make private and add a getter
-    static RendererAPI s_RendererAPI;
-    inline static RendererAPI GetAPI()
-    {
-        return s_RendererAPI;
-    }
 
-    // Draw the contents of the buffer (vertex buffer) on the screen
-    // This is done using the shader
-    // OpenGL operates like a state machine (the vertex buffer and shader can be
-    // chosen for each call)
-    void Draw();
+  public:
+    static void BeginScene();
+    static void EndScene();
+
+    static void Submit(const std::shared_ptr<VertexArray> &vertexArray);
+    static void Flush();
+
+    // Inline functions
+
+    inline static RendererAPI::API GetAPI()
+    {
+        return RendererAPI::GetAPI();
+    }
 };
+
 } // namespace Ambient

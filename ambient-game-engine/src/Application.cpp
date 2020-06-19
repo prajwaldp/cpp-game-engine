@@ -1,8 +1,6 @@
 #include "Application.h"
-
-#include <GLFW/glfw3.h>
-
 #include "Log.h"
+#include "Renderer/Renderer.h"
 
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
@@ -200,20 +198,23 @@ void Application::Run()
 {
     while (m_Running)
     {
-        glClearColor(0.2f, 0.2f, 0.2f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        RenderCommand::SetClearColor();
+        RenderCommand::Clear();
 
-        m_SquareShader->Bind();
-        m_SquareVertexArray->Bind();
-        glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        Renderer::BeginScene();
 
         // DirectX requires binding before the vertex buffer is created
         // Because the layout has to correspond
+
+        m_SquareShader->Bind();
+        Renderer::Submit(m_SquareVertexArray);
+
         m_Shader->Bind();
+        Renderer::Submit(m_VertexArray);
 
-        m_VertexArray->Bind();
+        Renderer::EndScene();
 
-        glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        Renderer::Flush(); // Usually done on a separate thread
 
         for (auto layer : m_LayerStack)
         {

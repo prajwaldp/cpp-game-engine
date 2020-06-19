@@ -6,16 +6,29 @@ namespace Ambient
 {
 // Set the Renderer API to OpenGL
 // Future support for Direct3D, Vulkan, etc.?
-RendererAPI Renderer::s_RendererAPI = RendererAPI::OpenGL;
+RendererAPI::API RendererAPI::s_API = RendererAPI::API::OpenGL;
 
-void Renderer::Draw()
+/**
+ * Takes all of our scene parameters
+ * E.g. Camera parameters, lighting and environment parameters etc.
+ **/
+void Renderer::BeginScene()
 {
-    unsigned int buffer;
-    float positions[] = {-0.5f, -0.5f, 0.0f, 0.5f, 0.5f, -0.5f};
-
-    // glGenBuffers(1, &buffer);
-    // glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    // glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions,
-    // GL_STATIC_DRAW); glDrawArrays(GL_TRIANGLES, 0, 3);
 }
+
+void Renderer::EndScene()
+{
+}
+
+void Renderer::Submit(const std::shared_ptr<VertexArray> &vertexArray)
+{
+    vertexArray->Bind();
+    RenderCommand::DrawIndexed(vertexArray);
+}
+
+void Renderer::Flush()
+{
+    // TODO FLush the renderer (in a different thread)
+}
+
 } // namespace Ambient
