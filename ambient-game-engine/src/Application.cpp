@@ -61,27 +61,38 @@ Application::Application()
     m_Window = std::unique_ptr<Window>(Window::Create());
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-    m_VertexArray.reset(VertexArray::Create());
+    /**
+     * Draw a triangle
+     * => Create a VertexArray
+     * => Create a VertexBuffer and IndexBuffer
+     * => Add the VertexBuffer and IndexBuffer to the VertexArray
+     **/
 
     // clang-format off
-    float vertices[3 * 7] = {
+    float triangleVertices[3 * 7] = {
         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
          0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
          0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
     };
     // clang-format on
 
-    m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+    m_VertexArray.reset(VertexArray::Create());
+
+    std::shared_ptr<VertexBuffer> triangleVertexBuffer;
+    triangleVertexBuffer.reset(VertexBuffer::Create(triangleVertices, sizeof(triangleVertices)));
 
     BufferLayout layout = {{ShaderDataType::Float3, "a_Position"}, {ShaderDataType::Float4, "a_Color"}};
-    m_VertexBuffer->SetLayout(layout);
-    m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+    triangleVertexBuffer->SetLayout(layout);
+    m_VertexArray->AddVertexBuffer(triangleVertexBuffer);
 
     uint32_t indices[3] = {0, 1, 2};
-    m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-    m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+    std::shared_ptr<IndexBuffer> triangleIndexBuffer;
+    triangleIndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+    m_VertexArray->SetIndexBuffer(triangleIndexBuffer);
 
-    m_SquareVertexArray.reset(VertexArray::Create());
+    /**
+     * Draw a Square
+     **/
 
     // clang-format off
     float squareVertices[3 * 4] = {
@@ -91,6 +102,8 @@ Application::Application()
         -0.75f,  0.75f, 0.0f
     };
     // clang-format on
+
+    m_SquareVertexArray.reset(VertexArray::Create());
 
     std::shared_ptr<VertexBuffer> squareVertexBuffer;
     squareVertexBuffer.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
@@ -200,7 +213,7 @@ void Application::Run()
 
         m_VertexArray->Bind();
 
-        glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
         for (auto layer : m_LayerStack)
         {
