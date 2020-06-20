@@ -9,23 +9,23 @@ LayerStack::LayerStack()
 
 LayerStack::~LayerStack()
 {
-    for (Layer *layer : m_Layers)
+    for (Layer* layer : m_Layers)
     {
         delete layer;
     }
 }
 
-void LayerStack::Push(Layer *layer)
+void LayerStack::Push(Layer* layer)
 {
     m_LayerIt = m_Layers.emplace(m_LayerIt, layer);
 }
 
-void LayerStack::PushOverlay(Layer *overlay)
+void LayerStack::PushOverlay(Layer* overlay)
 {
     m_Layers.emplace_back(overlay);
 }
 
-void LayerStack::Pop(Layer *layer)
+void LayerStack::Pop(Layer* layer)
 {
     auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 
@@ -36,7 +36,7 @@ void LayerStack::Pop(Layer *layer)
     }
 }
 
-void LayerStack::PopOverlay(Layer *overlay)
+void LayerStack::PopOverlay(Layer* overlay)
 {
     auto it = std::find(m_Layers.begin(), m_Layers.end(), overlay);
     if (it != m_Layers.end())

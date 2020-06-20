@@ -4,7 +4,7 @@
 
 namespace Ambient
 {
-VertexArray *VertexArray::Create()
+VertexArray* VertexArray::Create()
 {
     switch (Renderer::GetAPI())
     {

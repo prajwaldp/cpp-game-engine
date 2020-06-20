@@ -16,24 +16,24 @@ get pushed into the second half of the vector.
 class LayerStack
 {
   private:
-    std::vector<Layer *> m_Layers;
-    std::vector<Layer *>::iterator m_LayerIt;
+    std::vector<Layer*> m_Layers;
+    std::vector<Layer*>::iterator m_LayerIt;
 
   public:
     LayerStack();
     ~LayerStack();
 
-    void Push(Layer *layer);
-    void PushOverlay(Layer *overlay);
-    void Pop(Layer *layer);
-    void PopOverlay(Layer *layer);
+    void Push(Layer* layer);
+    void PushOverlay(Layer* overlay);
+    void Pop(Layer* layer);
+    void PopOverlay(Layer* layer);
 
-    std::vector<Layer *>::iterator begin()
+    std::vector<Layer*>::iterator begin()
     {
         return m_Layers.begin();
     }
 
-    std::vector<Layer *>::iterator end()
+    std::vector<Layer*>::iterator end()
     {
         return m_Layers.end();
     }

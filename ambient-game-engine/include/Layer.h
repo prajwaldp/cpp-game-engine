@@ -10,7 +10,7 @@ class Layer
     std::string m_DebugName;
 
   public:
-    Layer(const std::string &name = "Layer");
+    Layer(const std::string& name = "Layer");
     virtual ~Layer();
 
     // When a layer is pushed into the layer stack
@@ -29,11 +29,11 @@ class Layer
     }
 
     // When an event is sent to a layer
-    virtual void OnEvent(Event::Event &event)
+    virtual void OnEvent(Event::Event& event)
     {
     }
 
-    inline const std::string &GetName() const
+    inline const std::string& GetName() const
     {
         return m_DebugName;
     }

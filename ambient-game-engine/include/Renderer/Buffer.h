@@ -78,7 +78,7 @@ struct BufferElement
     uint32_t Size;
     bool IsNormalized;
 
-    BufferElement(ShaderDataType type, const std::string &name, bool normalized = false)
+    BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
         : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), IsNormalized(normalized)
     {
     }
@@ -140,7 +140,7 @@ class BufferLayout
         m_Stride = 0;
         uint32_t offset = 0;
 
-        for (auto &element : m_Elements)
+        for (auto& element : m_Elements)
         {
             element.Offset = offset;
             offset += element.Size;
@@ -153,7 +153,7 @@ class BufferLayout
     {
     }
 
-    BufferLayout(const std::initializer_list<BufferElement> &elements) : m_Elements(elements)
+    BufferLayout(const std::initializer_list<BufferElement>& elements) : m_Elements(elements)
     {
         CalculateOffsetAndStride();
     }
@@ -163,7 +163,7 @@ class BufferLayout
         return m_Stride;
     }
 
-    inline const std::vector<BufferElement> &GetElements() const
+    inline const std::vector<BufferElement>& GetElements() const
     {
         return m_Elements;
     }
@@ -197,10 +197,10 @@ class VertexBuffer
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
 
-    virtual const BufferLayout &GetLayout() const = 0;
-    virtual void SetLayout(const BufferLayout &layout) = 0;
+    virtual const BufferLayout& GetLayout() const = 0;
+    virtual void SetLayout(const BufferLayout& layout) = 0;
 
-    static VertexBuffer *Create(float *vertices, uint32_t size);
+    static VertexBuffer* Create(float* vertices, uint32_t size);
 };
 
 class IndexBuffer
@@ -215,7 +215,7 @@ class IndexBuffer
 
     virtual uint32_t GetCount() const = 0;
 
-    static IndexBuffer *Create(uint32_t *indices, uint32_t count);
+    static IndexBuffer* Create(uint32_t* indices, uint32_t count);
 };
 
 /*
@@ -228,18 +228,18 @@ class OpenGLVertexBuffer : public VertexBuffer
     BufferLayout m_Layout;
 
   public:
-    OpenGLVertexBuffer(float *vertices, uint32_t size);
+    OpenGLVertexBuffer(float* vertices, uint32_t size);
     virtual ~OpenGLVertexBuffer();
 
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
-    inline virtual const BufferLayout &GetLayout() const override
+    inline virtual const BufferLayout& GetLayout() const override
     {
         return m_Layout;
     }
 
-    inline virtual void SetLayout(const BufferLayout &layout) override
+    inline virtual void SetLayout(const BufferLayout& layout) override
     {
         m_Layout = layout;
     }
@@ -251,7 +251,7 @@ class OpenGLIndexBuffer : public IndexBuffer
     uint32_t m_Count;
 
   public:
-    OpenGLIndexBuffer(uint32_t *indices, uint32_t count);
+    OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
     virtual ~OpenGLIndexBuffer();
 
     virtual void Bind() const override;

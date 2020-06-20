@@ -13,4 +13,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 
+#include "Event.h"
+#include "KeyCodes.h"
+
 #include "EntryPoint.h"

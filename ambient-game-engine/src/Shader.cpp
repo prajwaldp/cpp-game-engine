@@ -7,7 +7,7 @@
 namespace Ambient
 {
 
-Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
+Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
 {
     // Source: https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language
 
@@ -16,7 +16,7 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
 
     // Send the vertex shader source code to GL
     // Note that std::string's .c_str is NULL character terminated.
-    const GLchar *source = (const GLchar *)vertexSource.c_str();
+    const GLchar* source = (const GLchar*)vertexSource.c_str();
     glShaderSource(vertexShader, 1, &source, 0);
 
     // Compile the vertex shader
@@ -45,7 +45,7 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
 
     // Send the fragment shader source code to GL
     // Note that std::string's .c_str is NULL character terminated.
-    source = (const GLchar *)fragmentSource.c_str();
+    source = (const GLchar*)fragmentSource.c_str();
     glShaderSource(fragmentShader, 1, &source, 0);
 
     // Compile the fragment shader
@@ -84,7 +84,7 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
 
     // Note the different functions here: glGetProgram* instead of glGetShader*.
     GLint isLinked = 0;
-    glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int *)&isLinked);
+    glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int*)&isLinked);
     if (isLinked == GL_FALSE)
     {
         GLint maxLength = 0;
@@ -124,7 +124,7 @@ void Shader::UnBind() const
     glUseProgram(0);
 }
 
-void Shader::UploadUniformMat4(const std::string &name, const glm::mat4 &matrix)
+void Shader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
 {
     GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 

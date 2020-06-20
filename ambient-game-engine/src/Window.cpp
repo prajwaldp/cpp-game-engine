@@ -9,17 +9,17 @@ namespace Ambient
 {
 static bool s_GLFWInitialized = false;
 
-static void GLFWErrorCallback(int error, const char *description)
+static void GLFWErrorCallback(int error, const char* description)
 {
     AM_CORE_ERROR("GLFW Error: {0}, {1}", error, description);
 }
 
-Window *Window::Create(const WindowProps &props)
+Window* Window::Create(const WindowProps& props)
 {
     return new MacOSWindow(props);
 }
 
-MacOSWindow::MacOSWindow(const WindowProps &props)
+MacOSWindow::MacOSWindow(const WindowProps& props)
 {
     Init(props);
 }
@@ -29,7 +29,7 @@ MacOSWindow::~MacOSWindow()
     ShutDown();
 }
 
-void MacOSWindow::Init(const WindowProps &props)
+void MacOSWindow::Init(const WindowProps& props)
 {
     m_Data.Title = props.Title;
     m_Data.Width = props.Width;
@@ -62,14 +62,14 @@ void MacOSWindow::Init(const WindowProps &props)
     SetVSync(true);
 
     // Set GLFW Callbacks
-    glfwSetWindowCloseCallback(m_Window, [](GLFWwindow *window) {
-        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+    glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
+        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
         Event::WindowCloseEvent event;
         data.EventCallback(event);
     });
 
-    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow *window, int width, int height) {
-        WindowData &data = *(WindowData *)glfwGetWindowUserPointer(window);
+    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
+        WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
         data.Width = width;
         data.Height = height;
 
@@ -77,8 +77,8 @@ void MacOSWindow::Init(const WindowProps &props)
         data.EventCallback(event);
     });
 
-    glfwSetKeyCallback(m_Window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-        WindowData &window_data = *(WindowData *)glfwGetWindowUserPointer(window);
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        WindowData& window_data = *(WindowData*)glfwGetWindowUserPointer(window);
 
         switch (action)
         {
@@ -101,8 +101,8 @@ void MacOSWindow::Init(const WindowProps &props)
         }
     });
 
-    glfwSetMouseButtonCallback(m_Window, [](GLFWwindow *window, int button, int action, int mods) {
-        WindowData &window_data = *(WindowData *)glfwGetWindowUserPointer(window);
+    glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
+        WindowData& window_data = *(WindowData*)glfwGetWindowUserPointer(window);
 
         switch (action)
         {
@@ -120,15 +120,15 @@ void MacOSWindow::Init(const WindowProps &props)
         }
     });
 
-    glfwSetScrollCallback(m_Window, [](GLFWwindow *window, double x_offset, double y_offset) {
-        WindowData &window_data = *(WindowData *)glfwGetWindowUserPointer(window);
+    glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double x_offset, double y_offset) {
+        WindowData& window_data = *(WindowData*)glfwGetWindowUserPointer(window);
 
         Event::MouseScrolledEvent event(x_offset, y_offset);
         window_data.EventCallback(event);
     });
 
-    glfwSetCursorPosCallback(m_Window, [](GLFWwindow *window, double x_pos, double y_pos) {
-        WindowData &window_data = *(WindowData *)glfwGetWindowUserPointer(window);
+    glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x_pos, double y_pos) {
+        WindowData& window_data = *(WindowData*)glfwGetWindowUserPointer(window);
 
         Event::MouseMovedEvent event(x_pos, y_pos);
         window_data.EventCallback(event);

@@ -71,7 +71,7 @@ void OpenGLVertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer> &vertex_buffer)
+void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertex_buffer)
 {
     glBindVertexArray(m_RendererID);
     vertex_buffer->Bind();
@@ -82,13 +82,13 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer> &ver
     }
 
     uint32_t index = 0;
-    const auto &layout = vertex_buffer->GetLayout();
-    for (const auto &element : layout)
+    const auto& layout = vertex_buffer->GetLayout();
+    for (const auto& element : layout)
     {
         glEnableVertexAttribArray(index);
         glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type),
                               element.IsNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
-                              (const void *)element.Offset);
+                              (const void*)element.Offset);
 
         index++;
     }
@@ -96,7 +96,7 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer> &ver
     m_VertexBuffers.push_back(vertex_buffer);
 }
 
-void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer> &index_buffer)
+void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& index_buffer)
 {
     glBindVertexArray(m_RendererID);
     index_buffer->Bind();

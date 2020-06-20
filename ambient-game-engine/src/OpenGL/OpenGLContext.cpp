@@ -8,7 +8,7 @@
 
 namespace Ambient
 {
-OpenGLContext::OpenGLContext(GLFWwindow *window_handle) : m_WindowHandle(window_handle)
+OpenGLContext::OpenGLContext(GLFWwindow* window_handle) : m_WindowHandle(window_handle)
 {
 }
 

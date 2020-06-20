@@ -15,7 +15,7 @@ struct WindowProps
     unsigned int Width;
     unsigned int Height;
 
-    WindowProps(const std::string &title = "Ambient Engine", unsigned int width = 1280, unsigned int height = 720)
+    WindowProps(const std::string& title = "Ambient Engine", unsigned int width = 1280, unsigned int height = 720)
         : Title(title), Width(width), Height(height)
     {
     }
@@ -24,27 +24,30 @@ struct WindowProps
 class Window
 {
   public:
-    using EventCallbackFn = std::function<void(Ambient::Event::Event &)>;
+    using EventCallbackFn = std::function<void(Ambient::Event::Event&)>;
 
     virtual ~Window()
     {
     }
+
     virtual void OnUpdate() = 0;
 
     virtual unsigned int GetWidth() const = 0;
     virtual unsigned int GetHeight() const = 0;
 
-    virtual void SetEventCallback(const EventCallbackFn &callback) = 0;
+    virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
     virtual void SetVSync(bool enabled) = 0;
     virtual bool IsVsync() const = 0;
 
-    static Window *Create(const WindowProps &props = WindowProps());
+    virtual void* GetNativeWindow() const = 0;
+
+    static Window* Create(const WindowProps& props = WindowProps());
 };
 
 class MacOSWindow : public Window
 {
   public:
-    MacOSWindow(const WindowProps &props);
+    MacOSWindow(const WindowProps& props);
     virtual ~MacOSWindow();
 
     void OnUpdate() override;
@@ -59,7 +62,7 @@ class MacOSWindow : public Window
         return m_Data.Height;
     }
 
-    inline void SetEventCallback(const EventCallbackFn &callback) override
+    inline void SetEventCallback(const EventCallbackFn& callback) override
     {
         m_Data.EventCallback = callback;
     }
@@ -68,12 +71,17 @@ class MacOSWindow : public Window
 
     bool IsVsync() const override;
 
+    inline virtual void* GetNativeWindow() const override
+    {
+        return m_Window;
+    }
+
   private:
-    virtual void Init(const WindowProps &props);
+    virtual void Init(const WindowProps& props);
     virtual void ShutDown();
 
-    GLFWwindow *m_Window;
-    GraphicsContext *m_Context;
+    GLFWwindow* m_Window;
+    GraphicsContext* m_Context;
 
     struct WindowData
     {

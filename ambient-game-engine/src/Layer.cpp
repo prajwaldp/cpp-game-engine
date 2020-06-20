@@ -2,7 +2,7 @@
 
 namespace Ambient
 {
-Layer::Layer(const std::string &debug_name) : m_DebugName(debug_name)
+Layer::Layer(const std::string& debug_name) : m_DebugName(debug_name)
 {
 }
 Layer::~Layer()

@@ -10,7 +10,7 @@ namespace Ambient
  * Vertex Buffer Definitions *
  * ***************************/
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, uint32_t size)
+OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 {
     // glCreateBuffers is only available in OpenGL 4.5 onwards
     glGenBuffers(1, &m_RendererID);
@@ -39,7 +39,7 @@ void OpenGLVertexBuffer::Unbind() const
  * Index Buffer Definitions *
  * **************************/
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t *indices, uint32_t count) : m_Count(count)
+OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count) : m_Count(count)
 {
     // glCreateBuffers is only available in OpenGL 4.5 onwards
     glGenBuffers(1, &m_RendererID);

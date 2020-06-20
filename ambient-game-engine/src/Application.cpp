@@ -4,10 +4,17 @@
 
 namespace Ambient
 {
-Application *Application::s_Instance = nullptr;
+Application* Application::s_Instance = nullptr;
 
 Application::Application()
 {
+    if (s_Instance != nullptr)
+    {
+        AM_CORE_ERROR("This is not the first instance of Application");
+    }
+
+    s_Instance = this;
+
     m_Window = std::unique_ptr<Window>(Window::Create());
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 }
@@ -29,17 +36,17 @@ void Application::Run()
     }
 }
 
-void Application::PushLayer(Layer *layer)
+void Application::PushLayer(Layer* layer)
 {
     m_LayerStack.Push(layer);
 }
 
-void Application::PushOverlay(Layer *overlay)
+void Application::PushOverlay(Layer* overlay)
 {
     m_LayerStack.PushOverlay(overlay);
 }
 
-void Application::OnEvent(Event::Event &e)
+void Application::OnEvent(Event::Event& e)
 {
     Event::EventDispatcher dispatcher(e);
     dispatcher.Dispatch<Event::WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
@@ -56,7 +63,7 @@ void Application::OnEvent(Event::Event &e)
     }
 }
 
-bool Application::OnWindowClosed(Event::WindowCloseEvent &e)
+bool Application::OnWindowClosed(Event::WindowCloseEvent& e)
 {
     m_Running = false;
     return true;

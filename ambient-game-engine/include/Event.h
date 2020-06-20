@@ -99,10 +99,12 @@ class WindowResizeEvent : public Event
     WindowResizeEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height)
     {
     }
+
     inline unsigned int GetWidth() const
     {
         return m_Width;
     }
+
     inline unsigned int GetHeight() const
     {
         return m_Height;
@@ -146,6 +148,7 @@ class KeyEvent : public Event
     {
         return m_KeyCode;
     }
+
     EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryKeyboard)
 };
 

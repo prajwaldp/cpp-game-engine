@@ -6,7 +6,7 @@
 namespace Ambient
 {
 
-VertexBuffer *VertexBuffer::Create(float *vertices, uint32_t size)
+VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
 {
     switch (Renderer::GetAPI())
     {
@@ -19,7 +19,7 @@ VertexBuffer *VertexBuffer::Create(float *vertices, uint32_t size)
     return nullptr;
 }
 
-IndexBuffer *IndexBuffer::Create(uint32_t *indices, uint32_t count)
+IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
 {
     switch (Renderer::GetAPI())
     {
