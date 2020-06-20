@@ -5,7 +5,7 @@ namespace Ambient
 class Input
 {
   public:
-    static bool IsKeyPressed(int keycode)
+    inline static bool IsKeyPressed(int keycode)
     {
         return s_Instance->IsKeyPressedImpl(keycode);
     }

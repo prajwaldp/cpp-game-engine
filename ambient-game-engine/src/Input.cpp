@@ -6,6 +6,8 @@
 
 namespace Ambient
 {
+Input* Input::s_Instance = new MacOSInput();
+
 bool MacOSInput::IsKeyPressedImpl(int keycode)
 {
     auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
