@@ -1,5 +1,6 @@
 #include "Log.h"
 #include "Renderer/VertexArray.h"
+#include "Types.h"
 
 #include <GL/glew.h>
 
@@ -71,7 +72,7 @@ void OpenGLVertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertex_buffer)
+void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffer)
 {
     glBindVertexArray(m_RendererID);
     vertex_buffer->Bind();
@@ -96,7 +97,7 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& ver
     m_VertexBuffers.push_back(vertex_buffer);
 }
 
-void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& index_buffer)
+void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& index_buffer)
 {
     glBindVertexArray(m_RendererID);
     index_buffer->Bind();
