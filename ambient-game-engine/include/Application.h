@@ -3,6 +3,7 @@
 #include "Event.h"
 #include "LayerStack.h"
 #include "Log.h"
+#include "Timestep.h"
 #include "Window.h"
 
 namespace Ambient
@@ -37,6 +38,7 @@ class Application
     bool m_Running = true;
 
     LayerStack m_LayerStack; // stack allocated ?
+    float m_LastFrameTime;
 };
 
 Application* CreateApplication();

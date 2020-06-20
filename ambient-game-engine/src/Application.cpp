@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "GLFW/glfw3.h" // For glfwGetTime
+
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
 namespace Ambient
@@ -27,9 +29,13 @@ void Application::Run()
 {
     while (m_Running)
     {
+        float time = (float)glfwGetTime();
+        Timestep timestep = time - m_LastFrameTime;
+        m_LastFrameTime = time;
+
         for (auto layer : m_LayerStack)
         {
-            layer->OnUpdate();
+            layer->OnUpdate(timestep);
         }
 
         m_Window->OnUpdate();

@@ -17,4 +17,6 @@
 #include "Input.h"
 #include "KeyCodes.h"
 
+#include "Timestep.h"
+
 #include "EntryPoint.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Timestep.h"
 
 namespace Ambient
 {
@@ -24,7 +25,7 @@ class Layer
     }
 
     // When a layer is updated
-    virtual void OnUpdate()
+    virtual void OnUpdate(Timestep ts)
     {
     }
 
