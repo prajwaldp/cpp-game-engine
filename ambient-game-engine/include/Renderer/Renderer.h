@@ -19,6 +19,8 @@ class RendererAPI
         OpenGL = 1
     };
 
+    virtual void Init() = 0;
+
     virtual void SetClearColor() = 0;
     virtual void Clear() = 0;
 
@@ -39,6 +41,11 @@ class RendererAPI
 class RenderCommand
 {
   public:
+    inline static void Init()
+    {
+        s_RendererAPI->Init();
+    }
+
     inline static void SetClearColor()
     {
         s_RendererAPI->SetClearColor();
@@ -62,6 +69,7 @@ class Renderer
 {
 
   public:
+    static void Init();
     static void BeginScene(OrthographicCamera& camera);
     static void EndScene();
 

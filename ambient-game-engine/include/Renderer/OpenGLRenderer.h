@@ -5,6 +5,7 @@ namespace Ambient
 {
 class OpenGLRendererAPI : public RendererAPI
 {
+    virtual void Init() override;
     virtual void SetClearColor() override;
     virtual void Clear() override;
 

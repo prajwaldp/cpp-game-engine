@@ -31,8 +31,26 @@ OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath) : m_FilePath(filep
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
+    GLenum internalFormat = 0, format = 0;
+
+    if (channels == 4)
+    {
+        internalFormat = GL_RGBA8;
+        format = GL_RGBA;
+    }
+    else if (channels == 3)
+    {
+        internalFormat = GL_RGB8;
+        format = GL_RGB;
+    }
+
+    if (internalFormat == 0 || format == 0)
+    {
+        AM_CORE_ERROR("Image structure cannot be determined. Channels = {}", channels);
+    }
+
     // Allocating space on the GPU
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, buffer);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // No need to retain the texture in the CPU memory

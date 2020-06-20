@@ -5,6 +5,12 @@
 
 namespace Ambient
 {
+void OpenGLRendererAPI::Init()
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
 void OpenGLRendererAPI::SetClearColor()
 {
     glClearColor(0.1, 0.1, 0.9, 1.0);
