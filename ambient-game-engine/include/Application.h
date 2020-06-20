@@ -3,11 +3,6 @@
 #include "Event.h"
 #include "LayerStack.h"
 #include "Log.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/Camera.h"
-#include "Renderer/Renderer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/VertexArray.h"
 #include "Window.h"
 
 namespace Ambient
