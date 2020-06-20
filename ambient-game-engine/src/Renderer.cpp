@@ -19,13 +19,15 @@ void Renderer::EndScene()
 {
 }
 
-void Renderer::Submit(const std::shared_ptr<Shader> shader, const std::shared_ptr<VertexArray>& vertexArray)
+void Renderer::Submit(const std::shared_ptr<Shader> shader, const std::shared_ptr<VertexArray>& vertexArray,
+                      const glm::mat4 transformMatrix)
 {
     // DirectX requires binding before the vertex buffer is created
     // Because the layout has to correspond
 
     shader->Bind();
     shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+    shader->UploadUniformMat4("u_Transform", transformMatrix);
 
     vertexArray->Bind();
     RenderCommand::DrawIndexed(vertexArray);
