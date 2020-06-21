@@ -7,90 +7,90 @@
 
 namespace Ambient
 {
-Application* Application::s_Instance = nullptr;
+    Application* Application::s_Instance = nullptr;
 
-Application::Application()
-{
-    if (s_Instance != nullptr)
+    Application::Application()
     {
-        AM_CORE_ERROR("This is not the first instance of Application");
+        if (s_Instance != nullptr)
+        {
+            AM_CORE_ERROR("This is not the first instance of Application");
+        }
+
+        s_Instance = this;
+
+        m_Window = std::unique_ptr<Window>(Window::Create());
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+
+        Renderer::Init();
     }
 
-    s_Instance = this;
-
-    m_Window = std::unique_ptr<Window>(Window::Create());
-    m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
-
-    Renderer::Init();
-}
-
-Application::~Application()
-{
-}
-
-void Application::Run()
-{
-    while (m_Running)
+    Application::~Application()
     {
-        float time = (float)glfwGetTime();
-        Timestep timestep = time - m_LastFrameTime;
-        m_LastFrameTime = time;
+    }
 
-        if (!m_Minimized)
+    void Application::Run()
+    {
+        while (m_Running)
         {
-            for (auto layer : m_LayerStack)
+            float time = (float)glfwGetTime();
+            Timestep timestep = time - m_LastFrameTime;
+            m_LastFrameTime = time;
+
+            if (!m_Minimized)
             {
-                layer->OnUpdate(timestep);
+                for (auto layer : m_LayerStack)
+                {
+                    layer->OnUpdate(timestep);
+                }
+            }
+
+            m_Window->OnUpdate();
+        }
+    }
+
+    void Application::PushLayer(Layer* layer)
+    {
+        m_LayerStack.Push(layer);
+    }
+
+    void Application::PushOverlay(Layer* overlay)
+    {
+        m_LayerStack.PushOverlay(overlay);
+    }
+
+    void Application::OnEvent(Event& e)
+    {
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResized));
+
+        AM_CORE_TRACE("{0}", e.ToString());
+
+        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+        {
+            (*--it)->OnEvent(e);
+            if (e.Handled)
+            {
+                break;
             }
         }
-
-        m_Window->OnUpdate();
     }
-}
 
-void Application::PushLayer(Layer* layer)
-{
-    m_LayerStack.Push(layer);
-}
-
-void Application::PushOverlay(Layer* overlay)
-{
-    m_LayerStack.PushOverlay(overlay);
-}
-
-void Application::OnEvent(Event& e)
-{
-    EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
-    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResized));
-
-    AM_CORE_TRACE("{0}", e.ToString());
-
-    for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+    bool Application::OnWindowClosed(WindowCloseEvent& e)
     {
-        (*--it)->OnEvent(e);
-        if (e.Handled)
+        m_Running = false;
+        return true;
+    }
+
+    bool Application::OnWindowResized(WindowResizeEvent& e)
+    {
+        if (e.GetWidth() == 0 || e.GetHeight() == 0)
         {
-            break;
+            m_Minimized = true;
         }
+        m_Minimized = false;
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+        return false;
     }
-}
-
-bool Application::OnWindowClosed(WindowCloseEvent& e)
-{
-    m_Running = false;
-    return true;
-}
-
-bool Application::OnWindowResized(WindowResizeEvent& e)
-{
-    if (e.GetWidth() == 0 || e.GetHeight() == 0)
-    {
-        m_Minimized = true;
-    }
-    m_Minimized = false;
-    Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
-
-    return false;
-}
 } // namespace Ambient

@@ -10,92 +10,100 @@
 
 namespace Ambient
 {
-class RendererAPI
-{
-  public:
-    enum class API
+    class RendererAPI
     {
-        None = 0,
-        OpenGL = 1
+    public:
+        enum class API
+        {
+            None = 0,
+            OpenGL = 1
+        };
+
+        virtual void Init() = 0;
+
+        virtual void SetClearColor() = 0;
+
+        virtual void Clear() = 0;
+
+        virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
+
+        virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
+
+        inline static API GetAPI()
+        {
+            return s_API;
+        }
+
+    private:
+        static API s_API;
     };
-
-    virtual void Init() = 0;
-    virtual void SetClearColor() = 0;
-    virtual void Clear() = 0;
-    virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
-    virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
-
-    inline static API GetAPI()
-    {
-        return s_API;
-    }
-
-  private:
-    static API s_API;
-};
 
 /**
  * A static wrapper for OpenGL commands
  **/
-class RenderCommand
-{
-  public:
-    inline static void Init()
+    class RenderCommand
     {
-        s_RendererAPI->Init();
-    }
+    public:
+        inline static void Init()
+        {
+            s_RendererAPI->Init();
+        }
 
-    inline static void SetClearColor()
-    {
-        s_RendererAPI->SetClearColor();
-    }
+        inline static void SetClearColor()
+        {
+            s_RendererAPI->SetClearColor();
+        }
 
-    inline static void Clear()
-    {
-        s_RendererAPI->Clear();
-    }
+        inline static void Clear()
+        {
+            s_RendererAPI->Clear();
+        }
 
-    inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
-    {
-        s_RendererAPI->SetViewport(x, y, width, height);
-    }
+        inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+        {
+            s_RendererAPI->SetViewport(x, y, width, height);
+        }
 
-    inline static void DrawIndexed(const Ref<VertexArray>& vertexArray)
-    {
-        s_RendererAPI->DrawIndexed(vertexArray);
-    }
+        inline static void DrawIndexed(const Ref<VertexArray>& vertexArray)
+        {
+            s_RendererAPI->DrawIndexed(vertexArray);
+        }
 
-  private:
-    static RendererAPI* s_RendererAPI;
-};
-
-class Renderer
-{
-
-  public:
-    static void Init();
-    static void OnWindowResize(uint32_t width, uint32_t height);
-    static void BeginScene(OrthographicCamera& camera);
-    static void EndScene();
-
-    static void Submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray,
-                       const glm::mat4 transformMatrix = glm::mat4(1.0f));
-    static void Flush();
-
-    // Inline functions
-
-    inline static RendererAPI::API GetAPI()
-    {
-        return RendererAPI::GetAPI();
-    }
-
-  private:
-    struct SceneData
-    {
-        glm::mat4 ViewProjectionMatrix;
+    private:
+        static RendererAPI* s_RendererAPI;
     };
 
-    static SceneData* m_SceneData;
-};
+    class Renderer
+    {
+
+    public:
+        static void Init();
+
+        static void OnWindowResize(uint32_t width, uint32_t height);
+
+        static void BeginScene(OrthographicCamera& camera);
+
+        static void EndScene();
+
+        static void Submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray,
+                const glm::mat4 transformMatrix = glm::mat4(1.0f));
+
+        static void Flush();
+
+        // Inline functions
+
+        inline static RendererAPI::API GetAPI()
+        {
+            return RendererAPI::GetAPI();
+        }
+
+    private:
+        struct SceneData
+        {
+            glm::mat4 ViewProjectionMatrix;
+        };
+
+        static SceneData* m_SceneData;
+    };
 
 } // namespace Ambient

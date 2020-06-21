@@ -6,30 +6,30 @@
 namespace Ambient
 {
 
-VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
-{
-    switch (Renderer::GetAPI())
+    VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
     {
-    case RendererAPI::API::OpenGL:
-        return new OpenGLVertexBuffer(vertices, size);
-    default:
-        AM_CORE_ERROR("Renderer API not implemented yet.");
+        switch (Renderer::GetAPI())
+        {
+        case RendererAPI::API::OpenGL:
+            return new OpenGLVertexBuffer(vertices, size);
+        default:
+            AM_CORE_ERROR("Renderer API not implemented yet.");
+        }
+
+        return nullptr;
     }
 
-    return nullptr;
-}
-
-IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
-{
-    switch (Renderer::GetAPI())
+    IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
     {
-    case RendererAPI::API::OpenGL:
-        return new OpenGLIndexBuffer(indices, count);
-    default:
-        AM_CORE_ERROR("Renderer API not implemented yet.");
-    }
+        switch (Renderer::GetAPI())
+        {
+        case RendererAPI::API::OpenGL:
+            return new OpenGLIndexBuffer(indices, count);
+        default:
+            AM_CORE_ERROR("Renderer API not implemented yet.");
+        }
 
-    return nullptr;
-}
+        return nullptr;
+    }
 
 } // namespace Ambient

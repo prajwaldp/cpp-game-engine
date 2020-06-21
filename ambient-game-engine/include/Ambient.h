@@ -14,6 +14,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
 #include "Renderer/VertexArray.h"
+#include "Renderer/Renderer2D.h"
 
 #include "Event.h"
 #include "Input.h"

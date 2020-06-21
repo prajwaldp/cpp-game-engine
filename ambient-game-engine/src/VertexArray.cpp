@@ -4,16 +4,16 @@
 
 namespace Ambient
 {
-VertexArray* VertexArray::Create()
-{
-    switch (Renderer::GetAPI())
+    VertexArray* VertexArray::Create()
     {
-    case RendererAPI::API::OpenGL:
-        return new OpenGLVertexArray();
-    default:
-        AM_CORE_ERROR("Renderer API not implemented yet.");
-    }
+        switch (Renderer::GetAPI())
+        {
+        case RendererAPI::API::OpenGL:
+            return new OpenGLVertexArray();
+        default:
+            AM_CORE_ERROR("Renderer API not implemented yet.");
+        }
 
-    return nullptr;
-}
+        return nullptr;
+    }
 } // namespace Ambient

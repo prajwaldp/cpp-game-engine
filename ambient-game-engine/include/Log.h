@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -6,23 +7,25 @@
 
 namespace Ambient
 {
-class Logger
-{
-  public:
-    static void Init();
-    inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()
+    class Logger
     {
-        return s_CoreLogger;
-    };
-    inline static std::shared_ptr<spdlog::logger>& GetClientLogger()
-    {
-        return s_ClientLogger;
-    };
+    public:
+        static void Init();
 
-  private:
-    static std::shared_ptr<spdlog::logger> s_CoreLogger;
-    static std::shared_ptr<spdlog::logger> s_ClientLogger;
-};
+        inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()
+        {
+            return s_CoreLogger;
+        };
+
+        inline static std::shared_ptr<spdlog::logger>& GetClientLogger()
+        {
+            return s_ClientLogger;
+        };
+
+    private:
+        static std::shared_ptr<spdlog::logger> s_CoreLogger;
+        static std::shared_ptr<spdlog::logger> s_ClientLogger;
+    };
 } // namespace Ambient
 
 // Core Log Macros

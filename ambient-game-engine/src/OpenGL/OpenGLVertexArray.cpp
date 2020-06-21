@@ -6,102 +6,102 @@
 
 namespace Ambient
 {
-static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-{
-    switch (type)
+    static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     {
-    case ShaderDataType::None:
+        switch (type)
+        {
+        case ShaderDataType::None:
+            return 0;
+            break;
+        case ShaderDataType::Float:
+            return GL_FLOAT;
+            break;
+        case ShaderDataType::Float2:
+            return GL_FLOAT;
+            break;
+        case ShaderDataType::Float3:
+            return GL_FLOAT;
+            break;
+        case ShaderDataType::Float4:
+            return GL_FLOAT;
+            break;
+        case ShaderDataType::Mat3:
+            return GL_FLOAT;
+            break;
+        case ShaderDataType::Mat4:
+            return GL_FLOAT;
+            break;
+        case ShaderDataType::Int:
+            return GL_INT;
+            break;
+        case ShaderDataType::Int2:
+            return GL_INT;
+            break;
+        case ShaderDataType::Int3:
+            return GL_INT;
+            break;
+        case ShaderDataType::Int4:
+            return GL_INT;
+            break;
+        case ShaderDataType::Bool:
+            return GL_BOOL;
+            break;
+        }
+
+        AM_CORE_ERROR("Unknown ShaderDataType");
         return 0;
-        break;
-    case ShaderDataType::Float:
-        return GL_FLOAT;
-        break;
-    case ShaderDataType::Float2:
-        return GL_FLOAT;
-        break;
-    case ShaderDataType::Float3:
-        return GL_FLOAT;
-        break;
-    case ShaderDataType::Float4:
-        return GL_FLOAT;
-        break;
-    case ShaderDataType::Mat3:
-        return GL_FLOAT;
-        break;
-    case ShaderDataType::Mat4:
-        return GL_FLOAT;
-        break;
-    case ShaderDataType::Int:
-        return GL_INT;
-        break;
-    case ShaderDataType::Int2:
-        return GL_INT;
-        break;
-    case ShaderDataType::Int3:
-        return GL_INT;
-        break;
-    case ShaderDataType::Int4:
-        return GL_INT;
-        break;
-    case ShaderDataType::Bool:
-        return GL_BOOL;
-        break;
     }
 
-    AM_CORE_ERROR("Unknown ShaderDataType");
-    return 0;
-}
-
-OpenGLVertexArray::OpenGLVertexArray()
-{
-    glGenVertexArrays(1, &m_RendererID);
-}
-
-OpenGLVertexArray::~OpenGLVertexArray()
-{
-    glDeleteVertexArrays(1, &m_RendererID);
-}
-
-void OpenGLVertexArray::Bind() const
-{
-    glBindVertexArray(m_RendererID);
-}
-
-void OpenGLVertexArray::Unbind() const
-{
-    glBindVertexArray(0);
-}
-
-void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffer)
-{
-    glBindVertexArray(m_RendererID);
-    vertex_buffer->Bind();
-
-    if (vertex_buffer->GetLayout().GetElements().size() == 0)
+    OpenGLVertexArray::OpenGLVertexArray()
     {
-        AM_CORE_ERROR("Trying to add a vertex buffer with no layout to the vertex array");
+        glGenVertexArrays(1, &m_RendererID);
     }
 
-    uint32_t index = 0;
-    const auto& layout = vertex_buffer->GetLayout();
-    for (const auto& element : layout)
+    OpenGLVertexArray::~OpenGLVertexArray()
     {
-        glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type),
-                              element.IsNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
-                              (const void*)element.Offset);
-
-        index++;
+        glDeleteVertexArrays(1, &m_RendererID);
     }
 
-    m_VertexBuffers.push_back(vertex_buffer);
-}
+    void OpenGLVertexArray::Bind() const
+    {
+        glBindVertexArray(m_RendererID);
+    }
 
-void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& index_buffer)
-{
-    glBindVertexArray(m_RendererID);
-    index_buffer->Bind();
-    m_IndexBuffer = index_buffer;
-}
+    void OpenGLVertexArray::Unbind() const
+    {
+        glBindVertexArray(0);
+    }
+
+    void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffer)
+    {
+        glBindVertexArray(m_RendererID);
+        vertex_buffer->Bind();
+
+        if (vertex_buffer->GetLayout().GetElements().size() == 0)
+        {
+            AM_CORE_ERROR("Trying to add a vertex buffer with no layout to the vertex array");
+        }
+
+        uint32_t index = 0;
+        const auto& layout = vertex_buffer->GetLayout();
+        for (const auto& element : layout)
+        {
+            glEnableVertexAttribArray(index);
+            glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.Type),
+                    element.IsNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
+                    (const void*)element.Offset);
+
+            index++;
+        }
+
+        m_VertexBuffers.push_back(vertex_buffer);
+    }
+
+    void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& index_buffer)
+    {
+        glBindVertexArray(m_RendererID);
+        index_buffer->Bind();
+        m_IndexBuffer = index_buffer;
+    }
 
 } // namespace Ambient

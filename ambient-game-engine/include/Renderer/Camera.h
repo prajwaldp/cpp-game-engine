@@ -4,60 +4,61 @@
 
 namespace Ambient
 {
-class OrthographicCamera
-{
-  public:
-    OrthographicCamera(float left, float right, float bottom, float top);
-    void SetProjection(float left, float right, float bottom, float top);
-
-    inline const glm::vec3& GetPosition()
+    class OrthographicCamera
     {
-        return m_Position;
-    }
+    public:
+        OrthographicCamera(float left, float right, float bottom, float top);
 
-    inline const float GetRotation()
-    {
-        return m_Rotation;
-    }
+        void SetProjection(float left, float right, float bottom, float top);
 
-    inline void SetPosition(const glm::vec3& position)
-    {
-        m_Position = position;
-        RecalculateViewMatrix();
-    }
+        inline const glm::vec3& GetPosition()
+        {
+            return m_Position;
+        }
 
-    inline void SetRotation(float rotation)
-    {
-        m_Rotation = rotation;
-        RecalculateViewMatrix();
-    }
+        inline const float GetRotation()
+        {
+            return m_Rotation;
+        }
 
-    inline const glm::mat4& GetProjectionMatrix() const
-    {
-        return m_ProjectionMatrix;
-    }
+        inline void SetPosition(const glm::vec3& position)
+        {
+            m_Position = position;
+            RecalculateViewMatrix();
+        }
 
-    inline const glm::mat4& GetViewMatrix() const
-    {
-        return m_ViewMatrix;
-    }
+        inline void SetRotation(float rotation)
+        {
+            m_Rotation = rotation;
+            RecalculateViewMatrix();
+        }
 
-    inline const glm::mat4& GetViewProjectionMatrix() const
-    {
-        return m_ViewProjectionMatrix;
-    }
+        inline const glm::mat4& GetProjectionMatrix() const
+        {
+            return m_ProjectionMatrix;
+        }
 
-  private:
-    glm::mat4 m_ProjectionMatrix;
-    glm::mat4 m_ViewMatrix;
+        inline const glm::mat4& GetViewMatrix() const
+        {
+            return m_ViewMatrix;
+        }
 
-    // Cache the view projection matrix
-    glm::mat4 m_ViewProjectionMatrix;
+        inline const glm::mat4& GetViewProjectionMatrix() const
+        {
+            return m_ViewProjectionMatrix;
+        }
 
-    // TODO Move to OrthographicCameraController
-    glm::vec3 m_Position = {0.0f, 0.0f, 0.0f};
-    float m_Rotation = 0.0f;
+    private:
+        glm::mat4 m_ProjectionMatrix;
+        glm::mat4 m_ViewMatrix;
 
-    void RecalculateViewMatrix();
-};
+        // Cache the view projection matrix
+        glm::mat4 m_ViewProjectionMatrix;
+
+        // TODO Move to OrthographicCameraController
+        glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
+        float m_Rotation = 0.0f;
+
+        void RecalculateViewMatrix();
+    };
 } // namespace Ambient

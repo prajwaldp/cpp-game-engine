@@ -8,31 +8,31 @@
 
 namespace Ambient
 {
-OpenGLContext::OpenGLContext(GLFWwindow* window_handle) : m_WindowHandle(window_handle)
-{
-}
-
-void OpenGLContext::Init()
-{
-    glfwMakeContextCurrent(m_WindowHandle);
-
-    // Initialized GLEW (The OpenGL Extension Loading library I chose)
-    glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
+    OpenGLContext::OpenGLContext(GLFWwindow* window_handle) : m_WindowHandle(window_handle)
     {
-        AM_CORE_ERROR("glewInit() failed. {}", glewGetErrorString(err));
     }
 
-    AM_CORE_INFO("OpenGL Info => Vendor: {}, Renderer: {}, Version: {}, GLSL "
-                 "Version: {}",
-                 glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION),
-                 glGetString(GL_SHADING_LANGUAGE_VERSION));
-}
+    void OpenGLContext::Init()
+    {
+        glfwMakeContextCurrent(m_WindowHandle);
 
-void OpenGLContext::SwapBuffers()
-{
-    // Swap GLFW window buffers
-    glfwSwapBuffers(m_WindowHandle);
-}
+        // Initialized GLEW (The OpenGL Extension Loading library I chose)
+        glewExperimental = GL_TRUE;
+        GLenum err = glewInit();
+        if (GLEW_OK != err)
+        {
+            AM_CORE_ERROR("glewInit() failed. {}", glewGetErrorString(err));
+        }
+
+        AM_CORE_INFO("OpenGL Info => Vendor: {}, Renderer: {}, Version: {}, GLSL "
+                     "Version: {}",
+                glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION),
+                glGetString(GL_SHADING_LANGUAGE_VERSION));
+    }
+
+    void OpenGLContext::SwapBuffers()
+    {
+        // Swap GLFW window buffers
+        glfwSwapBuffers(m_WindowHandle);
+    }
 } // namespace Ambient
