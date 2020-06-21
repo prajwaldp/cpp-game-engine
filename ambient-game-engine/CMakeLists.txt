@@ -4,6 +4,10 @@ project(Ambient VERSION 1.0
                 DESCRIPTION "A C++ game engine written from scratch"
                 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
+
 cmake_policy(SET CMP0068 NEW)  # `RPATH` settings on macOS do not affect `ambient`
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Includes the contents of the conanbuildinfo.cmake file.
