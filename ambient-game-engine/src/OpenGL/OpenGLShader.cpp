@@ -2,6 +2,7 @@
 #include "Renderer/Shader.h"
 
 #include "glm/gtc/type_ptr.hpp"
+#include <filesystem>
 #include <fstream>
 
 namespace Ambient
@@ -11,9 +12,13 @@ OpenGLShader::OpenGLShader(const std::string& filepath)
     std::string source = ReadFile(filepath);
     auto shaders = Preprocess(source);
     Compile(shaders);
+
+    std::filesystem::path fspath = filepath;
+    m_Name = fspath.stem().string();
 }
 
-OpenGLShader::OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource)
+OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource)
+    : m_Name(name)
 {
     std::unordered_map<GLenum, std::string> shaders;
     shaders[GL_VERTEX_SHADER] = vertexSource;
