@@ -162,8 +162,14 @@ void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
     // Source: https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language
 
     GLuint program = glCreateProgram();
-    std::vector<GLenum> glShaderIDs;
-    glShaderIDs.reserve(shaders.size());
+
+    // Only support 2 shaders for now
+    if (shaders.size() > 2)
+    {
+        AM_CORE_ERROR("More than 2 shaders in one file are not supported");
+    }
+    std::array<GLenum, 2> glShaderIDs;
+    int glShaderIDsIndex = 0;
 
     for (auto& i : shaders)
     {
@@ -200,7 +206,7 @@ void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
         }
 
         glAttachShader(program, shader);
-        glShaderIDs.push_back(shader);
+        glShaderIDs[glShaderIDsIndex++] = shader;
     }
 
     // Link our program

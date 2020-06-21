@@ -22,6 +22,7 @@ target_compile_features(ambient PUBLIC cxx_std_11)
 
 target_precompile_headers(ambient PUBLIC
                                   <algorithm>
+                                  <array>
                                   <functional>
                                   <iostream>
                                   <memory>
