@@ -20,10 +20,9 @@ class RendererAPI
     };
 
     virtual void Init() = 0;
-
     virtual void SetClearColor() = 0;
     virtual void Clear() = 0;
-
+    virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
     virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 
     inline static API GetAPI()
@@ -56,6 +55,11 @@ class RenderCommand
         s_RendererAPI->Clear();
     }
 
+    inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    {
+        s_RendererAPI->SetViewport(x, y, width, height);
+    }
+
     inline static void DrawIndexed(const Ref<VertexArray>& vertexArray)
     {
         s_RendererAPI->DrawIndexed(vertexArray);
@@ -70,6 +74,7 @@ class Renderer
 
   public:
     static void Init();
+    static void OnWindowResize(uint32_t width, uint32_t height);
     static void BeginScene(OrthographicCamera& camera);
     static void EndScene();
 

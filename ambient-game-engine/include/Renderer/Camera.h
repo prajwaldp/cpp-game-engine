@@ -7,9 +7,10 @@ namespace Ambient
 class OrthographicCamera
 {
   public:
-    OrthographicCamera(float top, float right, float bottom, float left);
+    OrthographicCamera(float left, float right, float bottom, float top);
+    void SetProjection(float left, float right, float bottom, float top);
 
-    inline const glm::vec3 &GetPosition()
+    inline const glm::vec3& GetPosition()
     {
         return m_Position;
     }
@@ -19,7 +20,7 @@ class OrthographicCamera
         return m_Rotation;
     }
 
-    inline void SetPosition(const glm::vec3 &position)
+    inline void SetPosition(const glm::vec3& position)
     {
         m_Position = position;
         RecalculateViewMatrix();
@@ -31,17 +32,17 @@ class OrthographicCamera
         RecalculateViewMatrix();
     }
 
-    inline const glm::mat4 &GetProjectionMatrix() const
+    inline const glm::mat4& GetProjectionMatrix() const
     {
         return m_ProjectionMatrix;
     }
 
-    inline const glm::mat4 &GetViewMatrix() const
+    inline const glm::mat4& GetViewMatrix() const
     {
         return m_ViewMatrix;
     }
 
-    inline const glm::mat4 &GetViewProjectionMatrix() const
+    inline const glm::mat4& GetViewProjectionMatrix() const
     {
         return m_ViewProjectionMatrix;
     }

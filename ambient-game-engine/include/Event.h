@@ -15,7 +15,7 @@
     {                                                                                                                  \
         return GetStaticType();                                                                                        \
     }                                                                                                                  \
-    virtual const char *GetName() const override                                                                       \
+    virtual const char* GetName() const override                                                                       \
     {                                                                                                                  \
         return #type;                                                                                                  \
     }
@@ -57,14 +57,14 @@ enum class Type
     MouseScrolled
 };
 
-enum Catergory
+enum Category
 {
     None = 0,
-    EventCatergoryApplication = BIT(0),
-    EventCatergoryInput = BIT(1),
-    EventCatergoryKeyboard = BIT(2),
-    EventCatergoryMouse = BIT(3),
-    EventCatergoryMouseButton = BIT(4),
+    EventCategoryApplication = BIT(0),
+    EventCategoryInput = BIT(1),
+    EventCategoryKeyboard = BIT(2),
+    EventCategoryMouse = BIT(3),
+    EventCategoryMouseButton = BIT(4),
 };
 
 class Event
@@ -76,7 +76,7 @@ class Event
 
     // Pure virtual functions: **Have** to be overidden in the derived class
     virtual Ambient::Event::Type GetEventType() const = 0;
-    virtual const char *GetName() const = 0;
+    virtual const char* GetName() const = 0;
     virtual int GetCategoryFlags() const = 0;
 
     virtual std::string ToString() const
@@ -84,7 +84,7 @@ class Event
         return GetName();
     }
 
-    inline bool IsInCategory(Ambient::Event::Catergory category)
+    inline bool IsInCategory(Ambient::Event::Category category)
     {
         return GetCategoryFlags() & category; // bitwise &
     }
@@ -118,7 +118,7 @@ class WindowResizeEvent : public Event
     }
 
     EVENT_CLASS_TYPE(WindowResize)
-    EVENT_CLASS_CATEGORY(EventCatergoryApplication)
+    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
 
 class WindowCloseEvent : public Event
@@ -132,7 +132,7 @@ class WindowCloseEvent : public Event
     }
 
     EVENT_CLASS_TYPE(WindowClose)
-    EVENT_CLASS_CATEGORY(EventCatergoryApplication)
+    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
 
 class KeyEvent : public Event
@@ -149,7 +149,7 @@ class KeyEvent : public Event
         return m_KeyCode;
     }
 
-    EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryKeyboard)
+    EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard)
 };
 
 class KeyPressedEvent : public KeyEvent
@@ -174,7 +174,7 @@ class KeyPressedEvent : public KeyEvent
     }
 
     EVENT_CLASS_TYPE(KeyPressed)
-    EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryKeyboard)
+    EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard)
 };
 
 /*
@@ -193,7 +193,7 @@ class MouseButtonEvent : public Event
     {
     }
 
-    EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse | EventCatergoryMouseButton)
+    EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse | EventCategoryMouseButton)
 };
 
 class MouseButtonPressedEvent : public MouseButtonEvent
@@ -240,7 +240,7 @@ class MousePositionEvent : public Event
     {
     }
 
-    EVENT_CLASS_CATEGORY(EventCatergoryInput | EventCatergoryMouse);
+    EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse);
 };
 
 class MouseMovedEvent : public MousePositionEvent
@@ -260,31 +260,44 @@ class MouseMovedEvent : public MousePositionEvent
     EVENT_CLASS_TYPE(MouseMoved)
 };
 
-class MouseScrolledEvent : public MousePositionEvent
+class MouseScrolledEvent : public Event
 {
   public:
-    MouseScrolledEvent(double x, double y) : MousePositionEvent(x, y)
+    MouseScrolledEvent(float xOffset, float yOffset) : m_XOffset(xOffset), m_YOffset(yOffset)
     {
+    }
+
+    inline float GetXOffset() const
+    {
+        return m_XOffset;
+    }
+    inline float GetYOffset() const
+    {
+        return m_YOffset;
     }
 
     std::string ToString() const override
     {
         std::stringstream ss;
-        ss << "MouseScrolledEvent: " << m_X << ", " << m_Y;
+        ss << "MouseScrolledEvent: " << GetXOffset() << ", " << GetYOffset();
         return ss.str();
     }
 
     EVENT_CLASS_TYPE(MouseScrolled)
+    EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse);
+
+  private:
+    float m_XOffset, m_YOffset;
 };
 
 class EventDispatcher
 {
-    template <typename T> using EventFn = std::function<bool(T &)>;
+    template <typename T> using EventFn = std::function<bool(T&)>;
 
-    Event &m_Event;
+    Event& m_Event;
 
   public:
-    EventDispatcher(Event &event) : m_Event(event)
+    EventDispatcher(Event& event) : m_Event(event)
     {
     }
 
@@ -292,14 +305,14 @@ class EventDispatcher
     {
         if (m_Event.GetEventType() == T::GetStaticType())
         {
-            m_Event.Handled = func(*(T *)&m_Event);
+            m_Event.Handled = func(*(T*)&m_Event);
             return true;
         }
         return false;
     }
 };
 
-inline std::ostream &operator<<(std::ostream &os, const Event &e)
+inline std::ostream& operator<<(std::ostream& os, const Event& e)
 {
     return os << e.ToString();
 }

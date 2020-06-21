@@ -36,9 +36,12 @@ void Application::Run()
         Timestep timestep = time - m_LastFrameTime;
         m_LastFrameTime = time;
 
-        for (auto layer : m_LayerStack)
+        if (!m_Minimized)
         {
-            layer->OnUpdate(timestep);
+            for (auto layer : m_LayerStack)
+            {
+                layer->OnUpdate(timestep);
+            }
         }
 
         m_Window->OnUpdate();
@@ -59,6 +62,7 @@ void Application::OnEvent(Event::Event& e)
 {
     Event::EventDispatcher dispatcher(e);
     dispatcher.Dispatch<Event::WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
+    dispatcher.Dispatch<Event::WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResized));
 
     AM_CORE_TRACE("{0}", e.ToString());
 
@@ -76,5 +80,17 @@ bool Application::OnWindowClosed(Event::WindowCloseEvent& e)
 {
     m_Running = false;
     return true;
+}
+
+bool Application::OnWindowResized(Event::WindowResizeEvent& e)
+{
+    if (e.GetWidth() == 0 || e.GetHeight() == 0)
+    {
+        m_Minimized = true;
+    }
+    m_Minimized = false;
+    Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+    return false;
 }
 } // namespace Ambient

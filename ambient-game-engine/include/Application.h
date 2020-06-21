@@ -32,13 +32,15 @@ class Application
     }
 
   private:
-    bool OnWindowClosed(Event::WindowCloseEvent&);
-
     std::unique_ptr<Window> m_Window;
     bool m_Running = true;
+    bool m_Minimized = false;
 
     LayerStack m_LayerStack; // stack allocated ?
     float m_LastFrameTime;
+
+    bool OnWindowClosed(Event::WindowCloseEvent&);
+    bool OnWindowResized(Event::WindowResizeEvent&);
 };
 
 Application* CreateApplication();

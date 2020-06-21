@@ -5,10 +5,10 @@ namespace Ambient
 {
 class OpenGLRendererAPI : public RendererAPI
 {
-    virtual void Init() override;
-    virtual void SetClearColor() override;
-    virtual void Clear() override;
-
-    virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
+    void Init() override;
+    void SetClearColor() override;
+    void Clear() override;
+    void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+    void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
 };
 } // namespace Ambient

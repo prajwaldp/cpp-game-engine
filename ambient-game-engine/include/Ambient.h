@@ -6,6 +6,7 @@
 
 #include "Renderer/Buffer.h"
 #include "Renderer/Camera.h"
+#include "Renderer/CameraController.h"
 #include "Renderer/GraphicsContext.h"
 #include "Renderer/OpenGLContext.h"
 #include "Renderer/OpenGLRenderer.h"
