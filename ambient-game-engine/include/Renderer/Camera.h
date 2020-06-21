@@ -56,7 +56,7 @@ class OrthographicCamera
 
     // TODO Move to OrthographicCameraController
     glm::vec3 m_Position = {0.0f, 0.0f, 0.0f};
-    float m_Rotation = 1.0;
+    float m_Rotation = 0.0f;
 
     void RecalculateViewMatrix();
 };
