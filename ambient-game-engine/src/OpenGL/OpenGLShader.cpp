@@ -162,7 +162,8 @@ void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
     // Source: https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language
 
     GLuint program = glCreateProgram();
-    std::vector<GLenum> glShaderIDs(shaders.size());
+    std::vector<GLenum> glShaderIDs;
+    glShaderIDs.reserve(shaders.size());
 
     for (auto& i : shaders)
     {
