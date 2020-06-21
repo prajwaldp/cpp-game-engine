@@ -7,11 +7,11 @@
 #define BIT(x) (1 << x)
 
 #define EVENT_CLASS_TYPE(type)                                                                                         \
-    static Type GetStaticType()                                                                                        \
+    static EventType GetStaticType()                                                                                        \
     {                                                                                                                  \
-        return Ambient::Event::Type::type;                                                                             \
+        return Ambient::EventType::type;                                                                               \
     }                                                                                                                  \
-    virtual Type GetEventType() const override                                                                         \
+    virtual EventType GetEventType() const override                                                                         \
     {                                                                                                                  \
         return GetStaticType();                                                                                        \
     }                                                                                                                  \
@@ -28,9 +28,7 @@
 
 namespace Ambient
 {
-namespace Event
-{
-enum class Type
+enum class EventType
 { // EventType is a strict type
     None = 0,
 
@@ -57,7 +55,7 @@ enum class Type
     MouseScrolled
 };
 
-enum Category
+enum EventCategory
 {
     None = 0,
     EventCategoryApplication = BIT(0),
@@ -75,7 +73,7 @@ class Event
     bool Handled = false;
 
     // Pure virtual functions: **Have** to be overidden in the derived class
-    virtual Ambient::Event::Type GetEventType() const = 0;
+    virtual Ambient::EventType GetEventType() const = 0;
     virtual const char* GetName() const = 0;
     virtual int GetCategoryFlags() const = 0;
 
@@ -84,7 +82,7 @@ class Event
         return GetName();
     }
 
-    inline bool IsInCategory(Ambient::Event::Category category)
+    inline bool IsInCategory(Ambient::EventCategory category)
     {
         return GetCategoryFlags() & category; // bitwise &
     }
@@ -317,5 +315,4 @@ inline std::ostream& operator<<(std::ostream& os, const Event& e)
     return os << e.ToString();
 }
 
-} // namespace Event
 } // namespace Ambient

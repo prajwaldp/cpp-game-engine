@@ -58,11 +58,11 @@ void Application::PushOverlay(Layer* overlay)
     m_LayerStack.PushOverlay(overlay);
 }
 
-void Application::OnEvent(Event::Event& e)
+void Application::OnEvent(Event& e)
 {
-    Event::EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<Event::WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
-    dispatcher.Dispatch<Event::WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResized));
+    EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
+    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResized));
 
     AM_CORE_TRACE("{0}", e.ToString());
 
@@ -76,13 +76,13 @@ void Application::OnEvent(Event::Event& e)
     }
 }
 
-bool Application::OnWindowClosed(Event::WindowCloseEvent& e)
+bool Application::OnWindowClosed(WindowCloseEvent& e)
 {
     m_Running = false;
     return true;
 }
 
-bool Application::OnWindowResized(Event::WindowResizeEvent& e)
+bool Application::OnWindowResized(WindowResizeEvent& e)
 {
     if (e.GetWidth() == 0 || e.GetHeight() == 0)
     {

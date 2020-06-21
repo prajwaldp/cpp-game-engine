@@ -14,7 +14,7 @@ class Application
     Application();
     virtual ~Application();
     void Run();
-    void OnEvent(Event::Event&);
+    void OnEvent(Event&);
 
     void PushLayer(Layer* layer);
     void PushOverlay(Layer* overlay);
@@ -39,8 +39,8 @@ class Application
     LayerStack m_LayerStack; // stack allocated ?
     float m_LastFrameTime;
 
-    bool OnWindowClosed(Event::WindowCloseEvent&);
-    bool OnWindowResized(Event::WindowResizeEvent&);
+    bool OnWindowClosed(WindowCloseEvent&);
+    bool OnWindowResized(WindowResizeEvent&);
 };
 
 Application* CreateApplication();

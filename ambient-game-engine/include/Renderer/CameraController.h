@@ -15,7 +15,7 @@ class OrthographicCameraController
     virtual ~OrthographicCameraController() = default;
 
     void OnUpdate(Timestep ts);
-    void OnEvent(Event::Event& e);
+    void OnEvent(Event& e);
 
     inline OrthographicCamera& GetCamera()
     {
@@ -28,8 +28,8 @@ class OrthographicCameraController
     }
 
   private:
-    bool OnMouseScrolled(Event::MouseScrolledEvent& e);
-    bool OnWindowResized(Event::WindowResizeEvent& e);
+    bool OnMouseScrolled(MouseScrolledEvent& e);
+    bool OnWindowResized(WindowResizeEvent& e);
 
   private:
     float m_AspectRatio;

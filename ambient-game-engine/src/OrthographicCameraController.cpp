@@ -53,14 +53,14 @@ void OrthographicCameraController::OnUpdate(Timestep ts)
     }
 }
 
-void OrthographicCameraController::OnEvent(Event::Event& e)
+void OrthographicCameraController::OnEvent(Event& e)
 {
-    Event::EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<Event::MouseScrolledEvent>(BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
-    dispatcher.Dispatch<Event::WindowResizeEvent>(BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
+    EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
+    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 }
 
-bool OrthographicCameraController::OnMouseScrolled(Event::MouseScrolledEvent& e)
+bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 {
     m_ZoomLevel -= e.GetYOffset() * 0.25f;
     m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
@@ -70,7 +70,7 @@ bool OrthographicCameraController::OnMouseScrolled(Event::MouseScrolledEvent& e)
     return false;
 }
 
-bool OrthographicCameraController::OnWindowResized(Event::WindowResizeEvent& e)
+bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 {
     m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
     m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);

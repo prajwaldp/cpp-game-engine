@@ -64,7 +64,7 @@ void MacOSWindow::Init(const WindowProps& props)
     // Set GLFW Callbacks
     glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
         WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-        Event::WindowCloseEvent event;
+        WindowCloseEvent event;
         data.EventCallback(event);
     });
 
@@ -73,7 +73,7 @@ void MacOSWindow::Init(const WindowProps& props)
         data.Width = width;
         data.Height = height;
 
-        Event::WindowResizeEvent event(width, height);
+        WindowResizeEvent event(width, height);
         data.EventCallback(event);
     });
 
@@ -83,7 +83,7 @@ void MacOSWindow::Init(const WindowProps& props)
         switch (action)
         {
         case GLFW_PRESS: {
-            Event::KeyPressedEvent event(key, 0);
+            KeyPressedEvent event(key, 0);
             window_data.EventCallback(event);
             break;
         }
@@ -94,7 +94,7 @@ void MacOSWindow::Init(const WindowProps& props)
         }
 
         case GLFW_REPEAT: {
-            Event::KeyPressedEvent event(key, 1);
+            KeyPressedEvent event(key, 1);
             window_data.EventCallback(event);
             break;
         }
@@ -107,13 +107,13 @@ void MacOSWindow::Init(const WindowProps& props)
         switch (action)
         {
         case GLFW_PRESS: {
-            Event::MouseButtonPressedEvent event(button);
+            MouseButtonPressedEvent event(button);
             window_data.EventCallback(event);
             break;
         }
 
         case GLFW_RELEASE: {
-            Event::MouseButtonReleasedEvent event(button);
+            MouseButtonReleasedEvent event(button);
             window_data.EventCallback(event);
             break;
         }
@@ -123,14 +123,14 @@ void MacOSWindow::Init(const WindowProps& props)
     glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double x_offset, double y_offset) {
         WindowData& window_data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-        Event::MouseScrolledEvent event(x_offset, y_offset);
+        MouseScrolledEvent event(x_offset, y_offset);
         window_data.EventCallback(event);
     });
 
     glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x_pos, double y_pos) {
         WindowData& window_data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-        Event::MouseMovedEvent event(x_pos, y_pos);
+        MouseMovedEvent event(x_pos, y_pos);
         window_data.EventCallback(event);
     });
 }

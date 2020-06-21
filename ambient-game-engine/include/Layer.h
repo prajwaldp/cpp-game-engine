@@ -30,7 +30,7 @@ class Layer
     }
 
     // When an event is sent to a layer
-    virtual void OnEvent(Event::Event& event)
+    virtual void OnEvent(Event& event)
     {
     }
 
