@@ -16,7 +16,15 @@ namespace Ambient
 
         virtual void Bind() const = 0;
 
-        virtual void UnBind() const = 0; // For debugging
+        virtual void Unbind() const = 0; // For debugging
+
+        virtual void SetFloat3(const std::string& name, glm::vec3 vector) = 0;
+
+        virtual void SetFloat4(const std::string& name, glm::vec4 vector) = 0;
+
+        virtual void SetMat3(const std::string& name, glm::mat3 matrix) = 0;
+
+        virtual void SetMat4(const std::string& name, glm::mat4 matrix) = 0;
 
         virtual const std::string& GetName() const = 0;
 
@@ -53,9 +61,17 @@ namespace Ambient
 
         virtual ~OpenGLShader();
 
-        virtual void Bind() const override;
+        void Bind() const override;
 
-        virtual void UnBind() const override;
+        void Unbind() const override;
+
+        void SetFloat3(const std::string& name, glm::vec3 vector) override;
+
+        void SetFloat4(const std::string& name, glm::vec4 vector) override;
+
+        void SetMat3(const std::string& name, glm::mat3 matrix) override;
+
+        void SetMat4(const std::string& name, glm::mat4 matrix) override;
 
         inline virtual const std::string& GetName() const override
         {

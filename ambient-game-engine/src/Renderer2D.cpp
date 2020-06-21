@@ -19,7 +19,7 @@ namespace Ambient
     void Renderer2D::Init()
     {
         s_Data = new Renderer2DStorage();
-        s_Data->QuadVertexArray.reset(VertexArray::Create());
+        s_Data->QuadVertexArray = VertexArray::Create();
 
         float squareVertices[4 * 5] = {
                 -0.5f, -0.5f, 0.0f,
@@ -29,7 +29,7 @@ namespace Ambient
         };
 
         Ref<VertexBuffer> squareVertexBuffer;
-        squareVertexBuffer.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+        squareVertexBuffer = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
         squareVertexBuffer->SetLayout({
                 { ShaderDataType::Float3, "a_Position" }
         });
@@ -38,9 +38,10 @@ namespace Ambient
 
         uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
         Ref<IndexBuffer> squareIndexBuffer;
-        squareIndexBuffer.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+        squareIndexBuffer = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
         s_Data->QuadVertexArray->SetIndexBuffer(squareIndexBuffer);
 
+        // TODO Generate absolute path
         s_Data->FlatColorShader = Shader::Create("../../assets/shaders/FlatColor2.glsl");
     }
 
@@ -51,12 +52,9 @@ namespace Ambient
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
-        std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
-        std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformMat4(
-                "u_ViewProjection", camera.GetViewProjectionMatrix());
-
-        std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformMat4(
-                "u_Transform", glm::mat4(1.0f));
+        s_Data->FlatColorShader->Bind();
+        s_Data->FlatColorShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+        s_Data->FlatColorShader->SetMat4("u_Transform", glm::mat4(1.0f));
     }
 
     void Renderer2D::EndScene()
@@ -65,8 +63,8 @@ namespace Ambient
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
-        std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
-        std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->UploadUniformFloat4("u_Color", color);
+        s_Data->FlatColorShader->Bind();
+        s_Data->FlatColorShader->SetFloat4("u_Color", color);
 
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);

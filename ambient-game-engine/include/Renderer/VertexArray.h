@@ -27,7 +27,7 @@ namespace Ambient
 
         virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
 
-        static VertexArray* Create();
+        static Ref<VertexArray> Create();
     };
 
     class OpenGLVertexArray : public VertexArray
