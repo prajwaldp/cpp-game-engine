@@ -7,8 +7,8 @@
 namespace Ambient
 {
 
-    OrthographicCameraController::OrthographicCameraController(float aspectratio, bool rotation)
-            : m_AspectRatio(aspectratio),
+    OrthographicCameraController::OrthographicCameraController(float aspect_ratio, bool rotation)
+            : m_AspectRatio(aspect_ratio),
               m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
               m_Rotation(rotation)
     {

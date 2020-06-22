@@ -18,6 +18,8 @@ namespace Ambient
 
         virtual void Unbind() const = 0; // For debugging
 
+        virtual void SetIntArray(const std::string& name, int* value, uint32_t count) = 0;
+
         virtual void SetFloat(const std::string& name, float value) = 0;
 
         virtual void SetFloat3(const std::string& name, glm::vec3 vector) = 0;
@@ -69,6 +71,8 @@ namespace Ambient
 
         void Unbind() const override;
 
+        void SetIntArray(const std::string& name, int* values, uint32_t count) override;
+
         void SetFloat(const std::string& name, float value) override;
 
         void SetFloat3(const std::string& name, glm::vec3 vector) override;
@@ -87,6 +91,8 @@ namespace Ambient
         }
 
         void UploadUniformInt(const std::string& name, int value);
+
+        void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
 
         void UploadUniformFloat(const std::string& name, float value);
 
@@ -107,7 +113,7 @@ namespace Ambient
 
         void Compile(const std::unordered_map<GLenum, std::string>& shaders);
 
-        uint32_t m_RendererID;
+        uint32_t m_RendererID{};
 
         std::string m_Name;
     };

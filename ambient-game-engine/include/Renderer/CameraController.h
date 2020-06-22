@@ -11,7 +11,7 @@ namespace Ambient
     class OrthographicCameraController
     {
     public:
-        OrthographicCameraController(float aspectratio, bool rotation = false);
+        OrthographicCameraController(float aspect_ratio, bool rotation = false);
 
         virtual ~OrthographicCameraController() = default;
 

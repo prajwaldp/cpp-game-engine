@@ -27,6 +27,8 @@ namespace Ambient
         static Ref<Texture2D> Create(const std::string& filepath);
 
         static Ref<Texture2D> Create(uint32_t width, uint32_t height);
+
+        virtual bool operator==(const Texture2D& other) const = 0;
     };
 
     class OpenGLTexture2D : public Texture2D
@@ -53,6 +55,11 @@ namespace Ambient
         void Bind(uint32_t slot = 0) const override;
 
         void Unbind() const override;
+
+        inline bool operator==(const Texture2D& other) const override
+        {
+            return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
+        }
 
     private:
         std::string m_FilePath;

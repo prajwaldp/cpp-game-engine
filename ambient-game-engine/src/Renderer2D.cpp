@@ -15,6 +15,8 @@ namespace Ambient
         glm::vec3 Position;
         glm::vec4 Color;
         glm::vec2 TexCoord;
+        float TexIndex;
+        float RepeatCount;
     };
 
     struct Renderer2Ddata
@@ -24,14 +26,21 @@ namespace Ambient
         const uint32_t MAX_VERTICES = 4 * 10000;
         const uint32_t MAX_INDICES = 6 * 10000;
 
+        static const uint32_t MAX_TEXTURE_SLOTS = 16; // Check renderer capability
+
         Ref<VertexArray> QuadVertexArray;
         Ref<VertexBuffer> QuadVertexBuffer;
         Ref<Shader> Shader;
-        Ref<Texture> StandardWhiteTexture;
+        Ref<Texture2D> StandardWhiteTexture;
 
         uint32_t QuadIndexCount = 0;
         QuadVertex* QuadVertexBufferBase = nullptr;
         QuadVertex* QuadVertexBufferPtr = nullptr;
+
+        std::array<Ref<Texture2D>, MAX_TEXTURE_SLOTS> TextureSlots;
+        uint32_t TextureSlotIndex = 1; // 0 = white texture
+
+        glm::vec4 QuadVertexPositions[4];
     };
 
     static Renderer2Ddata s_Data;
@@ -44,13 +53,15 @@ namespace Ambient
         s_Data.QuadVertexBuffer->SetLayout({
                 { ShaderDataType::Float3, "a_Position" },
                 { ShaderDataType::Float4, "a_Color" },
-                { ShaderDataType::Float2, "a_TexCoord" }
+                { ShaderDataType::Float2, "a_TexCoord" },
+                { ShaderDataType::Float,  "a_TexIndex" },
+                { ShaderDataType::Float,  "a_RepeatCount" }
         });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
         s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MAX_VERTICES];
 
-        uint32_t* quad_indices = new uint32_t[s_Data.MAX_INDICES]; // avoid stack overflow. Remember to delete
+        auto quad_indices = new uint32_t[s_Data.MAX_INDICES]; // avoid stack overflow. Remember to delete
 
         for (uint32_t i = 0, offset = 0; i < s_Data.MAX_INDICES; i += 6, offset += 4)
         {
@@ -71,10 +82,21 @@ namespace Ambient
         uint32_t white_texture_data = 0xffffffff;
         s_Data.StandardWhiteTexture->SetData(&white_texture_data, sizeof(uint32_t));
 
+        int32_t samplers[s_Data.MAX_TEXTURE_SLOTS];
+        for (uint32_t i = 0; i < s_Data.MAX_TEXTURE_SLOTS; i++)
+            samplers[i] = i;
+
         // TODO Generate absolute path
         s_Data.Shader = Shader::Create("../../assets/shaders/Combined.glsl");
         s_Data.Shader->Bind();
-        s_Data.Shader->SetInt("u_Texture", 0);
+        s_Data.Shader->SetIntArray("u_Textures", samplers, s_Data.MAX_TEXTURE_SLOTS);
+
+        s_Data.TextureSlots[0] = s_Data.StandardWhiteTexture;
+
+        s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPositions[1] = { +0.5f, -0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPositions[2] = { +0.5f, +0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPositions[3] = { -0.5f, +0.5f, 0.0f, 1.0f };
     }
 
     void Renderer2D::Shutdown()
@@ -88,6 +110,8 @@ namespace Ambient
 
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        s_Data.TextureSlotIndex = 1;
     }
 
     void Renderer2D::EndScene()
@@ -99,6 +123,11 @@ namespace Ambient
 
     void Renderer2D::Flush()
     {
+        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+        {
+            s_Data.TextureSlots[i]->Bind(i);
+        }
+
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
     }
 
@@ -109,44 +138,40 @@ namespace Ambient
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
-        s_Data.QuadVertexBufferPtr->Position = position;
+        float texture_index = 0.0f, repeat_count = 1.0f;
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+                              * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
         s_Data.QuadVertexBufferPtr++;
 
-        s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y, 0.0f };
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
         s_Data.QuadVertexBufferPtr++;
 
-        s_Data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y + size.y, 0.0f };
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
         s_Data.QuadVertexBufferPtr++;
 
-        s_Data.QuadVertexBufferPtr->Position = { position.x, position.y + size.y, 0.0f };;
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
         s_Data.QuadVertexBufferPtr->Color = color;
         s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
-
-        /*
-        s_Data.Shader->SetFloat4("u_Color", color);
-        s_Data.StandardWhiteTexture->Bind();
-
-        glm::mat4 transform =
-                glm::translate(glm::mat4(1.0f), position) *  // translation
-                glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0 }); // scale
-
-        s_Data.Shader->SetMat4("u_Transform", transform);
-        s_Data.Shader->SetFloat("u_TileRepeatCount", 1.0f);
-
-        s_Data.QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
-
-        s_Data.StandardWhiteTexture->Unbind();
-        */
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
@@ -156,20 +181,183 @@ namespace Ambient
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
     {
-        s_Data.Shader->Bind();
-        texture->Bind();
+        constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-        glm::mat4 transform =
-                glm::translate(glm::mat4(1.0f), position) *  // translation
-                glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0 }); // scale
+        float texture_index = 0.0f, repeat_count = 1.0f;
 
-        s_Data.Shader->SetMat4("u_Transform", transform);
-        s_Data.Shader->SetFloat4("u_Color", glm::vec4(1.0f));
-        s_Data.Shader->SetFloat("u_TileRepeatCount", 1.0f);
+        for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                texture_index = (float)i;
+                break;
+            }
+        }
 
-        s_Data.QuadVertexArray->Bind();
-        RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
+        if (texture_index == 0.0f)
+        {
+            texture_index = (float)s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+            s_Data.TextureSlotIndex++;
+        }
 
-        texture->Unbind();
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+                              * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadIndexCount += 6;
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+            const glm::vec2& position,
+            const glm::vec2& size,
+            float angle,
+            const glm::vec4& color
+    )
+    {
+        DrawRotatedQuad({ position.x, position.y, 0 }, size, angle, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+            const glm::vec3& position,
+            const glm::vec2& size,
+            float angle,
+            const glm::vec4& color
+    )
+    {
+        float texture_index = 0.0f, repeat_count = 1.0f;
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+                              * glm::rotate(glm::mat4(1.0f), glm::radians(angle), { 0.0f, 0.0f, 1.0f })
+                              * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadIndexCount += 6;
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+            const glm::vec2& position,
+            const glm::vec2& size,
+            float angle,
+            const Ref<Texture2D>& texture
+    )
+    {
+        DrawRotatedQuad({ position.x, position.y, 0 }, size, angle, texture);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+            const glm::vec3& position,
+            const glm::vec2& size,
+            float angle,
+            const Ref<Texture2D>& texture
+    )
+    {
+        constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+        float texture_index = 0.0f, repeat_count = 1.0f;
+
+        for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                texture_index = (float)i;
+                break;
+            }
+        }
+
+        if (texture_index == 0.0f)
+        {
+            texture_index = (float)s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+            s_Data.TextureSlotIndex++;
+        }
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+                              * glm::rotate(glm::mat4(1.0f), glm::radians(angle), { 0.0f, 0.0f, 1.0f })
+                              * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
+        s_Data.QuadVertexBufferPtr->Color = color;
+        s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+        s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+        s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+        s_Data.QuadVertexBufferPtr++;
+
+        s_Data.QuadIndexCount += 6;
     }
 } // namespace Ambient
