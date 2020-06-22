@@ -27,8 +27,12 @@ namespace Ambient
         glViewport(x, y, width, height);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertex_array, uint32_t index_count)
     {
-        glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        // If the count is specified (i.e. is not 0), use it
+        uint32_t ib_count = index_count == 0 ? vertex_array->GetIndexBuffer()->GetCount() : index_count;
+
+        glDrawElements(GL_TRIANGLES, ib_count, GL_UNSIGNED_INT, nullptr);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 } // namespace Ambient

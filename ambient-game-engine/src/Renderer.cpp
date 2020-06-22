@@ -45,7 +45,7 @@ namespace Ambient
         std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transformMatrix);
 
         vertexArray->Bind();
-        RenderCommand::DrawIndexed(vertexArray);
+        RenderCommand::DrawIndexed(vertexArray, 0);
     }
 
     void Renderer::Flush()

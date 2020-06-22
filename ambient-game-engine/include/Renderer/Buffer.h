@@ -205,6 +205,10 @@ namespace Ambient
 
         virtual void SetLayout(const BufferLayout& layout) = 0;
 
+        virtual void SetData(const void* data, uint32_t size) = 0;
+
+        static Ref<VertexBuffer> Create(uint32_t size);
+
         static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
     };
 
@@ -221,6 +225,7 @@ namespace Ambient
 
         virtual uint32_t GetCount() const = 0;
 
+        // Current support only for 32-bit index buffers
         static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
     };
 
@@ -234,6 +239,7 @@ namespace Ambient
         BufferLayout m_Layout;
 
     public:
+        OpenGLVertexBuffer(uint32_t size);
         OpenGLVertexBuffer(float* vertices, uint32_t size);
 
         virtual ~OpenGLVertexBuffer();
@@ -251,6 +257,8 @@ namespace Ambient
         {
             m_Layout = layout;
         }
+
+        void SetData(const void* data, uint32_t size) override;
     };
 
     class OpenGLIndexBuffer : public IndexBuffer

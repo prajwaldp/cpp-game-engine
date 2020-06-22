@@ -18,6 +18,8 @@ namespace Ambient
 
         virtual void Unbind() const = 0; // For debugging
 
+        virtual void SetFloat(const std::string& name, float value) = 0;
+
         virtual void SetFloat3(const std::string& name, glm::vec3 vector) = 0;
 
         virtual void SetFloat4(const std::string& name, glm::vec4 vector) = 0;
@@ -66,6 +68,8 @@ namespace Ambient
         void Bind() const override;
 
         void Unbind() const override;
+
+        void SetFloat(const std::string& name, float value) override;
 
         void SetFloat3(const std::string& name, glm::vec3 vector) override;
 

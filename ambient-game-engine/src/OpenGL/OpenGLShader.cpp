@@ -42,6 +42,11 @@ namespace Ambient
         glUseProgram(0);
     }
 
+    void OpenGLShader::SetFloat(const std::string& name, float value)
+    {
+        UploadUniformFloat(name, value);
+    }
+
     void OpenGLShader::SetFloat3(const std::string& name, glm::vec3 vector)
     {
         UploadUniformFloat3(name, vector);

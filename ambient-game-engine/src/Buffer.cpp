@@ -5,6 +5,18 @@
 
 namespace Ambient
 {
+    Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+    {
+        switch (Renderer::GetAPI())
+        {
+        case RendererAPI::API::OpenGL:
+            return std::make_shared<OpenGLVertexBuffer>(size);
+        default:
+            AM_CORE_ERROR("Renderer API not implemented yet.");
+        }
+
+        return nullptr;
+    }
 
     Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
     {
