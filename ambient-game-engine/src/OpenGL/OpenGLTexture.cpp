@@ -9,6 +9,24 @@
 
 namespace Ambient
 {
+    OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
+    {
+        glGenTextures(1, &m_RendererID);
+        glBindTexture(GL_TEXTURE_2D, m_RendererID);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        GLenum internalFormat = GL_RGBA8, format = GL_RGBA;
+
+        uint32_t default_data = 0xffffffff;
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, &default_data);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
     OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath) : m_FilePath(filepath)
     {
         int width, height, channels;
@@ -63,9 +81,29 @@ namespace Ambient
         glDeleteTextures(1, &m_RendererID);
     }
 
+    void OpenGLTexture2D::SetData(void* data, uint32_t size)
+    {
+        uint32_t bytes_per_channel = 4; // RGBA
+        if (size != m_Width * m_Height * bytes_per_channel)
+        {
+            AM_CORE_ERROR("Cannot set texture data. The size does not match the width and height");
+        }
+
+        GLenum internalFormat = GL_RGBA8, format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, m_RendererID);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
     void OpenGLTexture2D::Bind(uint32_t slot) const
     {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, m_RendererID);
+    }
+
+    void OpenGLTexture2D::Unbind() const
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 } // namespace Ambient

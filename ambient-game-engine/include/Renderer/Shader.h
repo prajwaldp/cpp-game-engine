@@ -26,6 +26,8 @@ namespace Ambient
 
         virtual void SetMat4(const std::string& name, glm::mat4 matrix) = 0;
 
+        virtual void SetInt(const std::string& name, int value) = 0;
+
         virtual const std::string& GetName() const = 0;
 
         static Ref<Shader> Create(const std::string& filepath);
@@ -72,6 +74,8 @@ namespace Ambient
         void SetMat3(const std::string& name, glm::mat3 matrix) override;
 
         void SetMat4(const std::string& name, glm::mat4 matrix) override;
+
+        void SetInt(const std::string& name, int value) override;
 
         inline virtual const std::string& GetName() const override
         {
