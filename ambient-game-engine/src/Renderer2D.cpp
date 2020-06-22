@@ -22,16 +22,16 @@ namespace Ambient
     struct Renderer2Ddata
     {
         // Max quads that can be drawn in a single draw call
-        const uint32_t MAX_QUADS = 10000;
-        const uint32_t MAX_VERTICES = 4 * 10000;
-        const uint32_t MAX_INDICES = 6 * 10000;
+        static const uint32_t MAX_QUADS = 10000;
+        static const uint32_t MAX_VERTICES = 4 * MAX_QUADS;
+        static const uint32_t MAX_INDICES = 6 * MAX_QUADS;
 
         static const uint32_t MAX_TEXTURE_SLOTS = 16; // Check renderer capability
 
-        Ref<VertexArray> QuadVertexArray;
-        Ref<VertexBuffer> QuadVertexBuffer;
-        Ref<Shader> Shader;
-        Ref<Texture2D> StandardWhiteTexture;
+        Ref<VertexArray> QuadVertexArray = nullptr;
+        Ref<VertexBuffer> QuadVertexBuffer = nullptr;
+        Ref<Shader> Shader = nullptr;
+        Ref<Texture2D> StandardWhiteTexture = nullptr;
 
         uint32_t QuadIndexCount = 0;
         QuadVertex* QuadVertexBufferBase = nullptr;
@@ -40,7 +40,9 @@ namespace Ambient
         std::array<Ref<Texture2D>, MAX_TEXTURE_SLOTS> TextureSlots;
         uint32_t TextureSlotIndex = 1; // 0 = white texture
 
-        glm::vec4 QuadVertexPositions[4];
+        glm::vec4 QuadVertexPositions[4] = {};
+
+        Renderer2D::Statistics Stats;
     };
 
     static Renderer2Ddata s_Data;
@@ -48,7 +50,7 @@ namespace Ambient
     void Renderer2D::Init()
     {
         s_Data.QuadVertexArray = VertexArray::Create();
-        s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MAX_VERTICES * sizeof(QuadVertex));
+        s_Data.QuadVertexBuffer = VertexBuffer::Create(Renderer2Ddata::MAX_VERTICES * sizeof(QuadVertex));
 
         s_Data.QuadVertexBuffer->SetLayout({
                 { ShaderDataType::Float3, "a_Position" },
@@ -59,11 +61,11 @@ namespace Ambient
         });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-        s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MAX_VERTICES];
+        s_Data.QuadVertexBufferBase = new QuadVertex[Renderer2Ddata::MAX_VERTICES];
 
-        auto quad_indices = new uint32_t[s_Data.MAX_INDICES]; // avoid stack overflow. Remember to delete
+        auto quad_indices = new uint32_t[Renderer2Ddata::MAX_INDICES]; // avoid stack overflow. Remember to delete
 
-        for (uint32_t i = 0, offset = 0; i < s_Data.MAX_INDICES; i += 6, offset += 4)
+        for (uint32_t i = 0, offset = 0; i < Renderer2Ddata::MAX_INDICES; i += 6, offset += 4)
         {
             quad_indices[i + 0] = offset + 0;
             quad_indices[i + 1] = offset + 1;
@@ -74,7 +76,7 @@ namespace Ambient
             quad_indices[i + 5] = offset + 0;
         }
 
-        Ref<IndexBuffer> quad_ib = IndexBuffer::Create(quad_indices, s_Data.MAX_INDICES);
+        Ref<IndexBuffer> quad_ib = IndexBuffer::Create(quad_indices, Renderer2Ddata::MAX_INDICES);
         s_Data.QuadVertexArray->SetIndexBuffer(quad_ib);
         delete[] quad_indices;
 
@@ -82,8 +84,8 @@ namespace Ambient
         uint32_t white_texture_data = 0xffffffff;
         s_Data.StandardWhiteTexture->SetData(&white_texture_data, sizeof(uint32_t));
 
-        int32_t samplers[s_Data.MAX_TEXTURE_SLOTS];
-        for (uint32_t i = 0; i < s_Data.MAX_TEXTURE_SLOTS; i++)
+        int32_t samplers[Renderer2Ddata::MAX_TEXTURE_SLOTS];
+        for (uint32_t i = 0; i < Renderer2Ddata::MAX_TEXTURE_SLOTS; i++)
             samplers[i] = i;
 
         // TODO Generate absolute path
@@ -129,6 +131,17 @@ namespace Ambient
         }
 
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+
+        s_Data.Stats.DrawCalls++;
+    }
+
+    void Renderer2D::FlushAndReset()
+    {
+        EndScene();
+        s_Data.QuadIndexCount = 0;
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        s_Data.TextureSlotIndex = 1;
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -138,6 +151,11 @@ namespace Ambient
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
+        if (s_Data.QuadIndexCount >= Renderer2Ddata::MAX_INDICES)
+        {
+            FlushAndReset();
+        }
+
         float texture_index = 0.0f, repeat_count = 1.0f;
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
@@ -172,6 +190,8 @@ namespace Ambient
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
@@ -181,6 +201,11 @@ namespace Ambient
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
     {
+        if (s_Data.QuadIndexCount >= Renderer2Ddata::MAX_INDICES)
+        {
+            FlushAndReset();
+        }
+
         constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         float texture_index = 0.0f, repeat_count = 1.0f;
@@ -233,6 +258,8 @@ namespace Ambient
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawRotatedQuad(
@@ -252,6 +279,11 @@ namespace Ambient
             const glm::vec4& color
     )
     {
+        if (s_Data.QuadIndexCount >= Renderer2Ddata::MAX_INDICES)
+        {
+            FlushAndReset();
+        }
+
         float texture_index = 0.0f, repeat_count = 1.0f;
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
@@ -287,6 +319,8 @@ namespace Ambient
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
     }
 
     void Renderer2D::DrawRotatedQuad(
@@ -306,6 +340,11 @@ namespace Ambient
             const Ref<Texture2D>& texture
     )
     {
+        if (s_Data.QuadIndexCount >= Renderer2Ddata::MAX_INDICES)
+        {
+            FlushAndReset();
+        }
+
         constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         float texture_index = 0.0f, repeat_count = 1.0f;
@@ -359,5 +398,17 @@ namespace Ambient
         s_Data.QuadVertexBufferPtr++;
 
         s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCount++;
+    }
+
+    Renderer2D::Statistics Renderer2D::GetStats()
+    {
+        return s_Data.Stats;
+    }
+
+    void Renderer2D::ResetStats()
+    {
+        memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics));
     }
 } // namespace Ambient
