@@ -12,6 +12,7 @@
 #include "Renderer/OpenGLRenderer.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Shader.h"
+#include "Renderer/SubTexture2D.h"
 #include "Renderer/Texture.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Renderer2D.h"

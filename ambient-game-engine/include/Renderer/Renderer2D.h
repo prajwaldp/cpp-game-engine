@@ -2,6 +2,7 @@
 
 #include "Renderer/Camera.h"
 #include "Renderer/Texture.h"
+#include "Renderer/SubTexture2D.h"
 
 namespace Ambient
 {
@@ -26,6 +27,12 @@ namespace Ambient
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture);
 
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture);
+
+        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& sub_texture,
+                float repeat_count = 1.0f);
+
+        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& sub_texture,
+                float repeat_count = 1.0f);
 
         static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle,
                 const glm::vec4& color);

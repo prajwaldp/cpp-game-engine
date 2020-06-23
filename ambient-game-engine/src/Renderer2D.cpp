@@ -402,6 +402,60 @@ namespace Ambient
         s_Data.Stats.QuadCount++;
     }
 
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& sub_texture,
+            float repeat_count)
+    {
+        DrawQuad({ position.x, position.y, 0 }, size, sub_texture, repeat_count);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& sub_texture,
+            float repeat_count)
+    {
+        if (s_Data.QuadIndexCount >= Renderer2Ddata::MAX_INDICES)
+        {
+            FlushAndReset();
+        }
+
+        constexpr size_t quad_vertex_count = 4;
+        constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        const glm::vec2* texture_coordinates = sub_texture->GetTexCoords();
+        const Ref<Texture2D> texture = sub_texture->GetTexture();
+
+        float texture_index = 0.0f;
+
+        for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                texture_index = (float)i;
+                break;
+            }
+        }
+
+        if (texture_index == 0.0f)
+        {
+            texture_index = (float)s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+            s_Data.TextureSlotIndex++;
+        }
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+                              * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        for (size_t i = 0; i < quad_vertex_count; i++)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Color = color;
+            s_Data.QuadVertexBufferPtr->TexCoord = texture_coordinates[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = texture_index;
+            s_Data.QuadVertexBufferPtr->RepeatCount = repeat_count;
+            s_Data.QuadVertexBufferPtr++;
+        }
+
+        s_Data.QuadIndexCount += 6;
+        s_Data.Stats.QuadCount++;
+    }
+
     Renderer2D::Statistics Renderer2D::GetStats()
     {
         return s_Data.Stats;
