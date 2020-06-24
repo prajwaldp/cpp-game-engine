@@ -53,6 +53,11 @@ namespace Ambient
         }
     }
 
+    void OrthographicCameraController::CalculateView()
+    {
+        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    }
+
     void OrthographicCameraController::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);

@@ -19,17 +19,25 @@ namespace Ambient
 
         void OnEvent(Event& e);
 
-        inline OrthographicCamera& GetCamera()
+        OrthographicCamera& GetCamera()
         {
             return m_Camera;
         }
 
-        inline const OrthographicCamera& GetCamera() const
+        const OrthographicCamera& GetCamera() const
         {
             return m_Camera;
+        }
+
+        void SetZoomLevel(float zoom_level)
+        {
+            m_ZoomLevel = zoom_level;
+            CalculateView();
         }
 
     private:
+        void CalculateView();
+
         bool OnMouseScrolled(MouseScrolledEvent& e);
 
         bool OnWindowResized(WindowResizeEvent& e);
