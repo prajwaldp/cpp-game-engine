@@ -2,7 +2,7 @@
 
 #include "Event.h"
 #include "Renderer/Camera.h"
-#include "Timestep.h"
+#include "TimeStep.h"
 
 #include <glm/glm.hpp>
 
@@ -15,7 +15,7 @@ namespace Ambient
 
         virtual ~OrthographicCameraController() = default;
 
-        void OnUpdate(Timestep ts);
+        void OnUpdate(TimeStep ts);
 
         void OnEvent(Event& e);
 

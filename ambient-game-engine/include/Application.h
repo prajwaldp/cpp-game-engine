@@ -3,7 +3,7 @@
 #include "Event.h"
 #include "LayerStack.h"
 #include "Log.h"
-#include "Timestep.h"
+#include "TimeStep.h"
 #include "Window.h"
 
 namespace Ambient

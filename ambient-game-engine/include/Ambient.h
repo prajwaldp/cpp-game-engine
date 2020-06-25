@@ -2,6 +2,8 @@
 
 #include "Application.h"
 
+// Utilities
+#include "Types.h"
 #include "Log.h"
 
 #include "Renderer/Buffer.h"
@@ -18,12 +20,16 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Renderer2D.h"
 
+// Renderer Helpers
+#include "TimeStep.h"
+
+// Component-Based Architecture
+#include "GameObject.h"
+#include "Component.h"
+
+// Event Handling
 #include "Event.h"
 #include "Input.h"
 #include "KeyCodes.h"
-
-#include "Timestep.h"
-
-#include "Types.h"
 
 // #include "EntryPoint.h"

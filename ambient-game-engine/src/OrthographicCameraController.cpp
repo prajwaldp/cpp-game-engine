@@ -14,7 +14,7 @@ namespace Ambient
     {
     }
 
-    void OrthographicCameraController::OnUpdate(Timestep ts)
+    void OrthographicCameraController::OnUpdate(TimeStep ts)
     {
         float time = ts;
 

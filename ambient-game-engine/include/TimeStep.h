@@ -2,19 +2,19 @@
 
 namespace Ambient
 {
-    class Timestep
+    class TimeStep
     {
     public:
-        Timestep(float time = 0.0f) : m_Time(time)
+        explicit TimeStep(float time = 0.0f) : m_Time(time)
         {
         }
 
-        float GetSeconds() const
+        [[nodiscard]] float GetSeconds() const
         {
             return m_Time;
         }
 
-        float GetMilliSeconds() const
+        [[nodiscard]] float GetMilliSeconds() const
         {
             return m_Time * 1000.0f;
         }
