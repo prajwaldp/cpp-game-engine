@@ -1,6 +1,0 @@
-[submodule "SandboxApp"]
-	path = SandboxApp
-	url = https://github.com/prajwaldp/ambient-sandbox-application
-[submodule "Engine"]
-	path = Engine
-	url = https://github.com/prajwaldp/ambient-game-engine
